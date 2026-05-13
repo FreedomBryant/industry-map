@@ -24,6 +24,15 @@
     <!-- 主导产业 -->
     <section class="panel-section">
       <h3>🏭 产业分布</h3>
+      <div class="industry-tag-list">
+        <span
+          v-for="ind in store.selectedProvinceData!.industries"
+          :key="ind.name"
+          class="tag industry-tag clickable"
+          :class="{ chainActive: store.selectedIndustry === ind.category }"
+          @click="store.selectIndustry(ind.category)"
+        >{{ ind.name }} {{ ind.percentage }}%</span>
+      </div>
       <VChart
         :option="pieOption"
         autoresize
@@ -68,7 +77,9 @@
               <span
                 v-for="ind in city.industries"
                 :key="ind.name"
-                class="tag industry-tag"
+                class="tag industry-tag clickable"
+                :class="{ chainActive: store.selectedIndustry === ind.category }"
+                @click="store.selectIndustry(ind.category)"
               >{{ ind.name }} {{ ind.percentage }}%</span>
             </div>
             <div class="city-enterprises">
@@ -257,6 +268,29 @@ const barOption = computed(() => getIndustryBarOption(store.selectedProvinceData
 .industry-tag {
   background: #fff3e0;
   color: #e65100;
+}
+
+.industry-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.chainActive {
+  background: #1b5e20 !important;
+  color: #fff !important;
+  border-color: #1b5e20;
 }
 
 .enterprise-tag {

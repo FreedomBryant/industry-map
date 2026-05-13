@@ -37,6 +37,9 @@
 
     <!-- 底部对比面板 -->
     <ComparePanel />
+
+    <!-- 产业链弹窗 -->
+    <ChainPanel />
   </div>
 </template>
 
@@ -48,6 +51,7 @@ import IndustryFilter from './components/IndustryFilter.vue'
 import ComparePanel from './components/ComparePanel.vue'
 import SearchBox from './components/SearchBox.vue'
 import TimelineSlider from './components/TimelineSlider.vue'
+import ChainPanel from './components/ChainPanel.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()
