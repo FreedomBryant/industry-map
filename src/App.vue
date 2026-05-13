@@ -131,6 +131,7 @@ onMounted(() => {
 }
 
 .map-area {
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;

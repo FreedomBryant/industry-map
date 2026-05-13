@@ -30,6 +30,9 @@ export const useMapStore = defineStore('map', () => {
   /** 深色模式 */
   const isDark = ref(false)
 
+  /** 当前下钻省份（null 表示全国视图） */
+  const drillProvince = ref<string | null>(null)
+
   /** 数据源说明面板是否可见 */
   const showDataSource = ref(false)
 
@@ -157,6 +160,14 @@ export const useMapStore = defineStore('map', () => {
     isDark.value = !isDark.value
   }
 
+  function drillToProvince(name: string | null) {
+    drillProvince.value = name
+  }
+
+  function resetDrill() {
+    drillProvince.value = null
+  }
+
   return {
     overviews,
     selectedProvince,
@@ -175,6 +186,7 @@ export const useMapStore = defineStore('map', () => {
     isDark,
     showDataSource,
     dashboardSummary,
+    drillProvince,
     selectProvince,
     toggleProvince,
     hoverProvince,
@@ -188,5 +200,7 @@ export const useMapStore = defineStore('map', () => {
     selectIndustry,
     toggleDataSource,
     toggleDark,
+    drillToProvince,
+    resetDrill,
   }
 })

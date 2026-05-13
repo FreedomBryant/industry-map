@@ -1,5 +1,5 @@
 import * as echarts from 'echarts'
-import type { ProvinceOverview } from '../types'
+import type { ProvinceOverview, CityIndustry } from '../types'
 import type { IndustryChain } from '../data/industryChains'
 
 /** 色阶颜色（低→高：从浅黄到深红褐） */
@@ -85,6 +85,106 @@ const PROVINCE_COORDS: Record<string, [number, number]> = {
   '台湾': [121.0, 24.0],
 }
 
+/**
+ * 主要城市中心坐标
+ */
+const CITY_COORDS: Record<string, [number, number]> = {
+  '北京': [116.4, 39.9],
+  '天津': [117.2, 39.1],
+  '上海': [121.5, 31.2],
+  '重庆': [106.5, 29.6],
+  '石家庄': [114.5, 38.0],
+  '唐山': [118.2, 39.6],
+  '保定': [115.5, 38.9],
+  '廊坊': [116.7, 39.5],
+  '太原': [112.5, 37.9],
+  '大同': [113.3, 40.1],
+  '长治': [113.1, 36.2],
+  '呼和浩特': [111.8, 40.8],
+  '包头': [109.8, 40.7],
+  '鄂尔多斯': [109.8, 39.6],
+  '沈阳': [123.4, 41.8],
+  '大连': [121.6, 38.9],
+  '鞍山': [123.0, 41.1],
+  '长春': [125.3, 43.9],
+  '吉林市': [126.6, 43.8],
+  '哈尔滨': [126.6, 45.8],
+  '大庆': [125.1, 46.6],
+  '齐齐哈尔': [123.9, 47.3],
+  '苏州': [120.6, 31.3],
+  '南京': [118.8, 32.1],
+  '无锡': [120.3, 31.5],
+  '常州': [119.9, 31.8],
+  '南通': [120.9, 32.0],
+  '徐州': [117.2, 34.3],
+  '杭州': [120.2, 30.3],
+  '宁波': [121.5, 29.9],
+  '温州': [120.7, 28.0],
+  '绍兴': [120.6, 30.0],
+  '嘉兴': [120.8, 30.8],
+  '合肥': [117.3, 31.8],
+  '芜湖': [118.4, 31.3],
+  '滁州': [118.3, 32.3],
+  '福州': [119.3, 26.1],
+  '厦门': [118.1, 24.5],
+  '泉州': [118.6, 24.9],
+  '宁德': [119.5, 26.7],
+  '南昌': [115.9, 28.7],
+  '赣州': [114.9, 25.8],
+  '上饶': [117.9, 28.4],
+  '济南': [117.0, 36.7],
+  '青岛': [120.4, 36.1],
+  '烟台': [121.4, 37.5],
+  '潍坊': [119.1, 36.7],
+  '临沂': [118.3, 35.1],
+  '郑州': [113.7, 34.8],
+  '洛阳': [112.5, 34.6],
+  '南阳': [112.5, 33.0],
+  '武汉': [114.3, 30.6],
+  '襄阳': [112.1, 32.0],
+  '宜昌': [111.3, 30.7],
+  '长沙': [112.9, 28.2],
+  '株洲': [113.2, 27.8],
+  '湘潭': [112.9, 27.8],
+  '深圳': [114.1, 22.5],
+  '广州': [113.3, 23.1],
+  '佛山': [113.1, 23.0],
+  '东莞': [113.8, 23.0],
+  '惠州': [114.4, 23.1],
+  '珠海': [113.6, 22.3],
+  '南宁': [108.4, 22.8],
+  '柳州': [109.4, 24.3],
+  '桂林': [110.3, 25.3],
+  '海口': [110.3, 20.0],
+  '三亚': [109.5, 18.3],
+  '成都': [104.1, 30.6],
+  '绵阳': [104.7, 31.5],
+  '宜宾': [104.6, 28.8],
+  '泸州': [105.4, 28.9],
+  '贵阳': [106.7, 26.6],
+  '遵义': [106.9, 27.7],
+  '昆明': [102.7, 25.0],
+  '曲靖': [103.8, 25.5],
+  '大理': [100.2, 25.6],
+  '拉萨': [91.1, 29.7],
+  '西安': [108.9, 34.3],
+  '榆林': [109.7, 38.3],
+  '宝鸡': [107.1, 34.4],
+  '兰州': [103.8, 36.0],
+  '金昌': [102.2, 38.5],
+  '嘉峪关': [98.3, 39.8],
+  '西宁': [101.8, 36.6],
+  '海西': [97.3, 37.3],
+  '银川': [106.3, 38.5],
+  '石嘴山': [106.4, 39.0],
+  '乌鲁木齐': [87.6, 43.8],
+  '克拉玛依': [84.9, 45.6],
+  '昌吉': [87.3, 44.0],
+  '香港': [114.2, 22.3],
+  '澳门': [113.5, 22.2],
+  '台北': [121.5, 25.1],
+}
+
 /** 飞线颜色 */
 const FLY_LINE_COLOR = '#ff9800'
 const FLY_LINE_COLOR_DIM = '#ffcc80'
@@ -99,6 +199,8 @@ export function getMapOption(
   compareProvinces?: string[],
   highlightProvince?: string,
   chain?: IndustryChain,
+  drillProvince?: string,
+  drillCities?: CityIndustry[],
 ) {
   const maxGdp = Math.max(...overviews.map(o => o.gdp), 100000)
   const minGdp = Math.min(...overviews.map(o => o.gdp), 0)
@@ -107,13 +209,49 @@ export function getMapOption(
   const isComparing = compareProvinces !== undefined && compareProvinces.length > 0
   const isHighlighting = highlightProvince !== undefined && highlightProvince.length > 0
 
+  const isDrilling = drillProvince !== undefined && drillProvince !== null && drillProvince.length > 0
+
+  // 下钻省份的中心坐标
+  let drillCenter: [number, number] | undefined
+  let drillZoom = 1.2
+  if (isDrilling && drillProvince) {
+    const coords = PROVINCE_COORDS[drillProvince]
+    if (coords) {
+      drillCenter = coords
+      // 直辖市 zoom 高一些，大省略低
+      drillZoom = (drillProvince === '北京' || drillProvince === '天津' || drillProvince === '上海' || drillProvince === '重庆')
+        ? 6 : 3.5
+    }
+  }
+
+  // 城市散点数据
+  const cityScatterData: any[] = []
+  if (isDrilling && drillCities) {
+    for (const city of drillCities) {
+      const coord = CITY_COORDS[city.name]
+      if (!coord) continue
+      cityScatterData.push({
+        name: city.name,
+        value: [...coord, city.gdp],
+        gdp: city.gdp,
+        enterpriseCount: city.keyEnterprises.length,
+      })
+    }
+  }
+
   return {
     tooltip: {
       trigger: 'item' as const,
       formatter: (params: any) => {
         const data = params.data
         if (!data) return ''
-        // data.name 此时已用 GeoJSON 全称，用原始 province 字段查找
+        // 城市散点
+        if (data.enterpriseCount !== undefined) {
+          return `<b>${data.name}</b><br/>
+                  GDP: ${(data.gdp / 10000).toFixed(2)} 万亿元<br/>
+                  重点企业: ${data.enterpriseCount} 家`
+        }
+        // 省份地图
         const overview = overviews.find(o => o.province === data.province)
         if (!overview) return `<b>${params.name}</b>`
         return `<b>${data.fullName}</b><br/>
@@ -141,7 +279,8 @@ export function getMapOption(
         roam: true,
         selectedMode: 'single',
         aspectScale: 0.75,
-        zoom: 1.2,
+        zoom: isDrilling ? drillZoom : 1.2,
+        center: isDrilling && drillCenter ? drillCenter : undefined,
         label: {
           show: true,
           fontSize: 10,
@@ -191,6 +330,32 @@ export function getMapOption(
         }),
       },
       ...(chain ? getChainFlyLines(chain) : []),
+      ...(isDrilling && cityScatterData.length > 0 ? [{
+        name: '城市',
+        type: 'scatter',
+        coordinateSystem: 'geo',
+        zlevel: 6,
+        data: cityScatterData,
+        symbolSize: (val: any) => Math.max(8, Math.sqrt(val[2] / 10000) * 6),
+        encode: { value: 2 },
+        label: {
+          show: true,
+          formatter: '{b}',
+          fontSize: 11,
+          fontWeight: 'bold' as const,
+          color: '#37474f',
+          position: 'right' as const,
+        },
+        emphasis: {
+          label: { show: true, fontSize: 13, fontWeight: 'bold' },
+          itemStyle: { borderColor: '#fff', borderWidth: 2 },
+        },
+        itemStyle: {
+          color: '#ff6d00',
+          borderColor: '#fff',
+          borderWidth: 1.5,
+        },
+      }] : []),
     ],
   }
 }

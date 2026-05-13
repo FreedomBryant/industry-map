@@ -1,5 +1,8 @@
 <template>
   <div ref="chartRef" class="map-chart"></div>
+  <button v-if="store.drillProvince" class="drill-back" @click="store.resetDrill(); store.selectProvince(null)">
+    ← 返回全国
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -24,7 +27,23 @@ async function registerMap() {
 function renderChart() {
   if (!chart.value || store.overviews.length === 0) return
   const chain = store.selectedIndustry ? getChainById(store.selectedIndustry) : undefined
-  const option = getMapOption(store.overviews, store.filteredProvinces, store.compareProvinces, store.searchHighlight ?? undefined, chain)
+
+  // 下钻模式：获取该省份的城市数据
+  let drillCities: any[] | undefined
+  if (store.drillProvince) {
+    const provData = store.currentYearData.find(p => p.province === store.drillProvince)
+    if (provData) drillCities = provData.cities
+  }
+
+  const option = getMapOption(
+    store.overviews,
+    store.filteredProvinces,
+    store.compareProvinces,
+    store.searchHighlight ?? undefined,
+    chain,
+    store.drillProvince ?? undefined,
+    drillCities,
+  )
   chart.value.setOption(option)
 }
 
@@ -33,7 +52,25 @@ onMounted(async () => {
   if (chartRef.value) {
     chart.value = echarts.init(chartRef.value)
     chart.value.on('click', (params: any) => {
-      if (params.name) store.toggleProvince(params.name)
+      if (!params.name) {
+        // 点击空白区域
+        if (store.drillProvince) store.resetDrill()
+        return
+      }
+      // 城市散点点击 → 选中对应省份
+      if (params.seriesName === '城市') {
+        store.selectProvince(store.drillProvince)
+        return
+      }
+      // 省份地图点击
+      if (store.drillProvince) {
+        // 已下钻状态：再次点击省份复位
+        store.resetDrill()
+      } else {
+        // 未下钻：进入该省份下钻
+        store.drillToProvince(params.name)
+      }
+      store.toggleProvince(params.name)
     })
     chart.value.on('mouseover', (params: any) => {
       if (params.name) store.hoverProvince(params.name)
@@ -61,6 +98,7 @@ watch(() => store.compareProvinces, renderChart, { deep: true })
 watch(() => store.searchHighlight, renderChart)
 watch(() => store.selectedYear, renderChart)
 watch(() => store.selectedIndustry, renderChart)
+watch(() => store.drillProvince, renderChart)
 watch(() => store.selectedProvince, (name) => {
   if (!chart.value) return
   chart.value.dispatchAction({
@@ -77,5 +115,24 @@ watch(() => store.selectedProvince, (name) => {
   width: 100%;
   height: 100%;
   min-height: 500px;
+}
+
+.drill-back {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.drill-back:hover {
+  background: rgba(0, 0, 0, 0.75);
 }
 </style>
