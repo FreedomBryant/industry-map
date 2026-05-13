@@ -4,6 +4,13 @@ import { getProvinceOverviews, getProvinceByName, provinceData, DEFAULT_YEAR } f
 import type { AvailableYear } from '../data'
 import type { ProvinceOverview, ProvinceIndustry, IndustryCategory } from '../types'
 
+export interface DashboardSummary {
+  totalGDP: number           // 全国 GDP 总量（亿元）
+  totalEnterprises: number   // 重点企业总数
+  avgIndex: number           // 平均产业指数
+  provinceCount: number      // 有数据的省份数
+}
+
 export const useMapStore = defineStore('map', () => {
   // === State ===
   const overviews = ref<ProvinceOverview[]>([])
@@ -67,6 +74,23 @@ export const useMapStore = defineStore('map', () => {
     return overviews.value.filter(
       o => o.province.includes(q) || o.mainIndustry.includes(q)
     )
+  })
+
+  /** 全国汇总仪表盘数据 */
+  const dashboardSummary = computed<DashboardSummary>(() => {
+    const ov = overviews.value
+    if (ov.length === 0) return { totalGDP: 0, totalEnterprises: 0, avgIndex: 0, provinceCount: 0 }
+    const totalGDP = ov.reduce((s, o) => s + o.gdp, 0)
+    const provinceCount = ov.length
+    const avgIndex = Math.round(ov.reduce((s, o) => s + o.index, 0) / provinceCount)
+    // 从完整数据中统计企业总数
+    const yearData = selectedYear.value
+      ? (() => { const d = getProvinceByName(provinceData[0]?.province ?? '', selectedYear.value)
+                 return d ? provinceData.map(p => getProvinceByName(p.province, selectedYear.value) ?? p)
+                           : provinceData })()
+      : provinceData
+    const totalEnterprises = yearData.reduce((s, p) => s + p.keyEnterprises.length, 0)
+    return { totalGDP, totalEnterprises, avgIndex, provinceCount }
   })
 
   // === Actions ===
@@ -150,6 +174,7 @@ export const useMapStore = defineStore('map', () => {
     selectedIndustry,
     isDark,
     showDataSource,
+    dashboardSummary,
     selectProvince,
     toggleProvince,
     hoverProvince,

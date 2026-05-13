@@ -17,6 +17,8 @@
       </div>
     </header>
 
+    <DashboardPanel />
+
     <div class="app-body">
       <!-- 左侧地图区 -->
       <div class="map-area">
@@ -62,6 +64,7 @@ import SearchBox from './components/SearchBox.vue'
 import TimelineSlider from './components/TimelineSlider.vue'
 import ChainPanel from './components/ChainPanel.vue'
 import DataSourcePanel from './components/DataSourcePanel.vue'
+import DashboardPanel from './components/DashboardPanel.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()
