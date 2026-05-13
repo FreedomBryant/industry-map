@@ -13,6 +13,7 @@
         <SearchBox />
         <IndustryFilter />
         <button class="ds-btn" @click="store.toggleDataSource">📊 数据源</button>
+        <button class="theme-btn" @click="store.toggleDark">{{ store.isDark ? '☀️' : '🌙' }}</button>
       </div>
     </header>
 
@@ -48,7 +49,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
+
+watch(() => store.isDark, (val) => {
+  document.documentElement.setAttribute('data-theme', val ? 'dark' : 'light')
+})
 import ChinaMap from './components/ChinaMap.vue'
 import ProvincePanel from './components/ProvincePanel.vue'
 import IndustryFilter from './components/IndustryFilter.vue'
@@ -72,7 +77,7 @@ onMounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f7fa;
+  background: var(--bg-app);
 }
 
 .app-header {
@@ -80,8 +85,8 @@ onMounted(() => {
   align-items: center;
   gap: 16px;
   padding: 12px 24px;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
   z-index: 10;
 }
 
@@ -107,12 +112,12 @@ onMounted(() => {
 
 .app-header h1 {
   font-size: 22px;
-  color: #1b5e20;
+  color: var(--green-primary);
 }
 
 .subtitle {
   font-size: 13px;
-  color: #999;
+  color: var(--text-muted);
   letter-spacing: 1px;
 }
 
@@ -135,7 +140,7 @@ onMounted(() => {
   width: 0;
   overflow: hidden;
   transition: width 0.3s ease;
-  background: #fff;
+  background: var(--bg-card);
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.06);
 }
 
@@ -150,7 +155,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #bbb;
+  color: var(--text-placeholder);
   gap: 8px;
 }
 
@@ -165,18 +170,134 @@ onMounted(() => {
 
 .ds-btn {
   padding: 6px 14px;
-  border: 1px solid #c8e6c9;
+  border: 1px solid var(--border-accent);
   border-radius: 16px;
-  background: #fff;
+  background: var(--bg-card);
   font-size: 13px;
   cursor: pointer;
-  color: #2e7d32;
+  color: var(--green-light);
   transition: all 0.2s;
   white-space: nowrap;
 }
 
 .ds-btn:hover {
-  background: #e8f5e9;
-  border-color: #81c784;
+  background: var(--green-bg);
+  border-color: var(--green-light);
+}
+
+.theme-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: var(--bg-card);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.theme-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-dark);
+}
+</style>
+
+<!-- 全局 CSS 变量（深色模式） -->
+<style>
+:root {
+  --bg-app: #f5f7fa;
+  --bg-card: #ffffff;
+  --bg-hover: #f5f5f5;
+  --bg-input: #ffffff;
+  --bg-highlight: #f1f8e9;
+  --bg-overlay: rgba(0,0,0,0.45);
+  --bg-warning: #fff8e1;
+  --bg-close-hover: #f0f0f0;
+  --bg-menu: #ffffff;
+  --bg-side-card: #fafafa;
+
+  --text-primary: #333333;
+  --text-secondary: #555555;
+  --text-tertiary: #888888;
+  --text-muted: #999999;
+  --text-placeholder: #bbb;
+
+  --border-color: #e0e0e0;
+  --border-light: #eeeeee;
+  --border-lighter: #f0f0f0;
+  --border-dark: #cccccc;
+  --border-accent: #c8e6c9;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.18);
+
+  --green-primary: #1b5e20;
+  --green-light: #4caf50;
+  --green-bg: #e8f5e9;
+  --green-border: #c8e6c9;
+
+  --red: #e53935;
+  --red-bg: #ffebee;
+  --red-border: #ffcdd2;
+
+  --blue: #1565c0;
+  --blue-bg: #e3f2fd;
+  --blue-light: #1976d2;
+
+  --orange: #e65100;
+  --orange-bg: #fff3e0;
+
+  --yellow-border: #ffa726;
+}
+
+[data-theme="dark"] {
+  --bg-app: #121212;
+  --bg-card: #1e1e1e;
+  --bg-hover: #333333;
+  --bg-input: #2a2a2a;
+  --bg-highlight: #1b3a1e;
+  --bg-overlay: rgba(0,0,0,0.7);
+  --bg-warning: #3d2e00;
+  --bg-close-hover: #333333;
+  --bg-menu: #2a2a2a;
+  --bg-side-card: #252525;
+
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --text-tertiary: #777777;
+  --text-muted: #666666;
+  --text-placeholder: #555555;
+
+  --border-color: #333333;
+  --border-light: #2a2a2a;
+  --border-lighter: #333333;
+  --border-dark: #555555;
+  --border-accent: #2e7d32;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+
+  --green-primary: #4caf50;
+  --green-light: #66bb6a;
+  --green-bg: #1b3a1e;
+  --green-border: #2e7d32;
+
+  --red: #ef5350;
+  --red-bg: #3e1a1a;
+  --red-border: #6b2020;
+
+  --blue: #42a5f5;
+  --blue-bg: #1a2e3f;
+  --blue-light: #42a5f5;
+
+  --orange: #ff9800;
+  --orange-bg: #3d2400;
+
+  --yellow-border: #ffa726;
 }
 </style>

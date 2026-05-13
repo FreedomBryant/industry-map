@@ -165,7 +165,7 @@ async function exportPDF() {
 
 .panel-header h2 {
   font-size: 22px;
-  color: #1b5e20;
+  color: var(--green-primary);
 }
 
 .header-actions {
@@ -176,12 +176,12 @@ async function exportPDF() {
 
 .compare-btn {
   padding: 4px 10px;
-  border: 1px solid #81c784;
+  border: 1px solid var(--green-light);
   border-radius: 14px;
   font-size: 12px;
   cursor: pointer;
-  background: #fff;
-  color: #2e7d32;
+  background: var(--bg-card);
+  color: var(--green-light);
   transition: all 0.2s;
   white-space: nowrap;
 }
@@ -193,15 +193,15 @@ async function exportPDF() {
 .compare-btn.active {
   background: #e8f5e9;
   border-color: #43a047;
-  color: #1b5e20;
+  color: var(--green-primary);
 }
 
 .export-btn {
   width: 30px;
   height: 30px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: #fff;
+  background: var(--bg-card);
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -211,7 +211,7 @@ async function exportPDF() {
 }
 
 .export-btn:hover {
-  background: #f5f5f5;
+  background: var(--bg-hover);
   border-color: #bdbdbd;
 }
 

@@ -208,9 +208,9 @@ onUnmounted(() => {
   right: 24px;
   width: 480px;
   max-height: calc(100vh - 100px);
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -219,7 +219,7 @@ onUnmounted(() => {
 
 .chain-header {
   padding: 16px 20px 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: var(--border-light);
   flex-shrink: 0;
 }
 
@@ -231,7 +231,7 @@ onUnmounted(() => {
 
 .chain-title-row h3 {
   font-size: 18px;
-  color: #1b5e20;
+  color: var(--green-primary);
   margin: 0;
 }
 
@@ -240,19 +240,19 @@ onUnmounted(() => {
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: #999;
+  color: var(--text-muted);
   padding: 4px 8px;
   border-radius: 4px;
 }
 
 .close-btn:hover {
-  background: #f0f0f0;
-  color: #333;
+  background: var(--bg-close-hover);
+  color: var(--text-primary);
 }
 
 .chain-desc {
   font-size: 13px;
-  color: #888;
+  color: var(--text-tertiary);
   margin: 6px 0 10px;
 }
 
@@ -267,15 +267,15 @@ onUnmounted(() => {
   border-radius: 14px;
   font-size: 12px;
   cursor: pointer;
-  background: #fff;
-  color: #666;
+  background: var(--bg-card);
+  color: var(--text-secondary);
   transition: all 0.2s;
 }
 
 .tab-btn.active {
-  background: #1b5e20;
+  background: var(--green-primary);
   color: #fff;
-  border-color: #1b5e20;
+  border-color: var(--green-primary);
 }
 
 .graph-container {
@@ -294,7 +294,7 @@ onUnmounted(() => {
 }
 
 .node-card {
-  border: 1px solid #e8e8e8;
+  border: var(--border-lighter);
   border-radius: 8px;
   padding: 10px 12px;
 }
@@ -322,7 +322,7 @@ onUnmounted(() => {
 .node-name {
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .node-provinces {

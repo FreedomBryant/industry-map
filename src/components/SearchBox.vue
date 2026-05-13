@@ -76,7 +76,7 @@ function onSelect(name: string) {
 .search-box input {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-dark);
   border-radius: 6px;
   font-size: 14px;
   outline: none;
@@ -85,7 +85,7 @@ function onSelect(name: string) {
 }
 
 .search-box input:focus {
-  border-color: #43a047;
+  border-color: var(--green-light);
   box-shadow: 0 0 0 2px rgba(67, 160, 71, 0.15);
 }
 
@@ -95,8 +95,8 @@ function onSelect(name: string) {
   left: 0;
   right: 0;
   margin-top: 4px;
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--bg-menu);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   max-height: 300px;
   overflow-y: auto;
@@ -107,7 +107,7 @@ function onSelect(name: string) {
 .result-item {
   padding: 10px 12px;
   cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-lighter);
 }
 
 .result-item:last-child {
@@ -115,18 +115,18 @@ function onSelect(name: string) {
 }
 
 .result-item:hover {
-  background: #f5faff;
+  background: var(--blue-bg);
 }
 
 .result-name {
   font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .result-info {
   font-size: 12px;
-  color: #888;
+  color: var(--text-tertiary);
   margin-top: 4px;
 }
 </style>

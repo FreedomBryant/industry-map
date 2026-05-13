@@ -58,15 +58,15 @@ function onSlide(e: Event) {
   align-items: center;
   gap: 12px;
   padding: 6px 16px;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-sm);
   min-width: 340px;
 }
 
 .timeline-label {
   font-size: 13px;
-  color: #555;
+  color: var(--text-secondary);
   white-space: nowrap;
   font-weight: 500;
 }
@@ -83,7 +83,7 @@ function onSlide(e: Event) {
   height: 6px;
   -webkit-appearance: none;
   appearance: none;
-  background: #e0e0e0;
+  background: var(--border-color);
   border-radius: 3px;
   outline: none;
   cursor: pointer;
@@ -95,9 +95,9 @@ function onSlide(e: Event) {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #1976d2;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  background: var(--blue-light);
+  border: 2px solid var(--bg-card);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: transform 0.1s;
 }
@@ -110,9 +110,9 @@ function onSlide(e: Event) {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #1976d2;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  background: var(--blue-light);
+  border: 2px solid var(--bg-card);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
 
@@ -124,7 +124,7 @@ function onSlide(e: Event) {
 
 .tick {
   font-size: 11px;
-  color: #999;
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0 4px;
   transition: color 0.15s, font-weight 0.15s;
@@ -132,11 +132,11 @@ function onSlide(e: Event) {
 }
 
 .tick:hover {
-  color: #1976d2;
+  color: var(--blue-light);
 }
 
 .tick.active {
-  color: #1976d2;
+  color: var(--blue-light);
   font-weight: 600;
   font-size: 12px;
 }

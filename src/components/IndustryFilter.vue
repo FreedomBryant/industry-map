@@ -38,20 +38,20 @@ const categories = allCategories
   font-size: 12px;
   cursor: pointer;
   background: #f0f0f0;
-  color: #666;
+  color: var(--text-secondary);
   transition: all 0.2s;
   user-select: none;
   border: 1px solid transparent;
 }
 
 .filter-chip:hover {
-  background: #e0e0e0;
-  color: #333;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .filter-chip.active {
-  background: #1b5e20;
+  background: var(--green-primary);
   color: #fff;
-  border-color: #1b5e20;
+  border-color: var(--green-primary);
 }
 </style>

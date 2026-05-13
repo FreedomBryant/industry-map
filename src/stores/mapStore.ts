@@ -20,6 +20,9 @@ export const useMapStore = defineStore('map', () => {
   const selectedYear = ref<AvailableYear>(DEFAULT_YEAR)
   /** 当前查看的产业链（null 表示关闭） */
   const selectedIndustry = ref<string | null>(null)
+  /** 深色模式 */
+  const isDark = ref(false)
+
   /** 数据源说明面板是否可见 */
   const showDataSource = ref(false)
 
@@ -126,6 +129,10 @@ export const useMapStore = defineStore('map', () => {
     showDataSource.value = !showDataSource.value
   }
 
+  function toggleDark() {
+    isDark.value = !isDark.value
+  }
+
   return {
     overviews,
     selectedProvince,
@@ -141,6 +148,7 @@ export const useMapStore = defineStore('map', () => {
     selectedYear,
     currentYearData,
     selectedIndustry,
+    isDark,
     showDataSource,
     selectProvince,
     toggleProvince,
@@ -154,5 +162,6 @@ export const useMapStore = defineStore('map', () => {
     setYear,
     selectIndustry,
     toggleDataSource,
+    toggleDark,
   }
 })

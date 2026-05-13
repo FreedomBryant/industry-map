@@ -78,8 +78,8 @@ function getBarOption(industries: IndustryItem[]) {
 
 <style scoped>
 .compare-panel {
-  background: #fff;
-  border-top: 1px solid #e0e0e0;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
   padding: 12px 20px;
   max-height: 70vh;
@@ -96,7 +96,7 @@ function getBarOption(industries: IndustryItem[]) {
 
 .compare-header h3 {
   font-size: 15px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .compare-actions {
@@ -107,24 +107,24 @@ function getBarOption(industries: IndustryItem[]) {
 .btn-clear,
 .btn-fold {
   padding: 4px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
-  background: #fff;
-  color: #666;
+  background: var(--bg-card);
+  color: var(--text-secondary);
   transition: all 0.2s;
 }
 
 .btn-clear:hover,
 .btn-fold:hover {
-  background: #f5f5f5;
+  background: var(--bg-hover);
   border-color: #999;
 }
 
 .btn-clear {
-  color: #e53935;
-  border-color: #ffcdd2;
+  color: var(--red);
+  border-color: var(--red-border);
 }
 
 .btn-clear:hover {

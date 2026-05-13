@@ -71,7 +71,7 @@ const store = useMapStore()
 .ds-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,14 +79,14 @@ const store = useMapStore()
 }
 
 .ds-modal {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   width: 560px;
   max-width: 90vw;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-lg);
   animation: dsFadeIn 0.2s ease;
 }
 
@@ -100,13 +100,13 @@ const store = useMapStore()
   align-items: center;
   justify-content: space-between;
   padding: 18px 24px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: var(--border-lighter);
 }
 
 .ds-header h2 {
   margin: 0;
   font-size: 18px;
-  color: #1b5e20;
+  color: var(--green-primary);
 }
 
 .ds-close {
@@ -114,7 +114,7 @@ const store = useMapStore()
   height: 28px;
   border: none;
   border-radius: 6px;
-  background: #f0f0f0;
+  background: var(--bg-close-hover);
   cursor: pointer;
   font-size: 14px;
   display: flex;
@@ -124,7 +124,7 @@ const store = useMapStore()
 }
 
 .ds-close:hover {
-  background: #e0e0e0;
+  background: var(--bg-hover);
 }
 
 .ds-body {
@@ -139,10 +139,10 @@ const store = useMapStore()
 
 .ds-body h3 {
   font-size: 15px;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 8px;
   padding-left: 4px;
-  border-left: 3px solid #4caf50;
+  border-left: var(--green-light);
   padding-left: 10px;
 }
 
@@ -153,24 +153,24 @@ const store = useMapStore()
 
 .ds-body li {
   font-size: 13px;
-  color: #555;
+  color: var(--text-secondary);
   line-height: 1.8;
 }
 
 .ds-disclaimer {
-  background: #fff8e1;
+  background: var(--bg-warning);
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 0;
 }
 
 .ds-disclaimer h3 {
-  border-left-color: #ffa726;
+  border-left-color: var(--yellow-border);
 }
 
 .ds-disclaimer p {
   font-size: 13px;
-  color: #666;
+  color: var(--text-tertiary);
   margin: 4px 0 0;
   line-height: 1.6;
 }
@@ -180,8 +180,8 @@ const store = useMapStore()
   justify-content: space-between;
   padding-top: 14px;
   margin-top: 6px;
-  border-top: 1px solid #eee;
+  border-top: var(--border-light);
   font-size: 12px;
-  color: #999;
+  color: var(--text-muted);
 }
 </style>
