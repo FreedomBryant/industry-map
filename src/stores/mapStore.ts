@@ -73,12 +73,6 @@ export const useMapStore = defineStore('map', () => {
   /** 匹配当前筛选产业的省份简称列表 */
   const filteredProvinces = computed<string[]>(() => {
     if (!selectedCategory.value) return []
-    const yearData = selectedYear.value
-      ? (() => { const d = getProvinceByName(provinceData[0]?.province ?? '', selectedYear.value)
-                 return d ? getProvinceOverviews(selectedYear.value)
-                           : getProvinceOverviews() } )()
-      : getProvinceOverviews()
-    // Reuse provinceData for filtering since categories don't change by year
     return provinceData
       .filter(p => p.industries.some(i => i.category === selectedCategory.value))
       .map(p => p.province)
