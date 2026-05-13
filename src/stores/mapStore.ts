@@ -11,6 +11,13 @@ export interface DashboardSummary {
   provinceCount: number      // 有数据的省份数
 }
 
+/** 企业所在地信息 */
+export interface EnterpriseLocation {
+  enterprise: string
+  province: string
+  city?: string
+}
+
 export const useMapStore = defineStore('map', () => {
   // === State ===
   const overviews = ref<ProvinceOverview[]>([])
@@ -23,6 +30,10 @@ export const useMapStore = defineStore('map', () => {
   const searchQuery = ref('')
   /** 搜索高亮的省份名 */
   const searchHighlight = ref<string | null>(null)
+  /** 企业搜索文本 */
+  const enterpriseQuery = ref('')
+  /** 选中的企业名（高亮在地图上） */
+  const selectedEnterprise = ref<string | null>(null)
   /** 当前选择年份（默认 2024） */
   const selectedYear = ref<AvailableYear>(DEFAULT_YEAR)
   /** 当前查看的产业链（null 表示关闭） */
@@ -77,6 +88,51 @@ export const useMapStore = defineStore('map', () => {
     return overviews.value.filter(
       o => o.province.includes(q) || o.mainIndustry.includes(q)
     )
+  })
+
+  /** 全量企业索引 Map — 企业名 → 所在地列表（从 provinceData 构建） */
+  const enterpriseIndex = computed<Map<string, EnterpriseLocation[]>>(() => {
+    const idx = new Map<string, EnterpriseLocation[]>()
+    for (const prov of provinceData) {
+      // 省份级企业
+      for (const ent of prov.keyEnterprises) {
+        const list = idx.get(ent) ?? []
+        list.push({ enterprise: ent, province: prov.province })
+        idx.set(ent, list)
+      }
+      // 城市级企业
+      for (const city of prov.cities) {
+        for (const ent of city.keyEnterprises) {
+          const list = idx.get(ent) ?? []
+          // 避免重复（同企业名同时出现在省和市）
+          if (!list.some(l => l.city === city.name)) {
+            list.push({ enterprise: ent, province: prov.province, city: city.name })
+            idx.set(ent, list)
+          }
+        }
+      }
+    }
+    return idx
+  })
+
+  /** 企业搜索结果（按前缀匹配 + 包含匹配） */
+  const enterpriseResults = computed<string[]>(() => {
+    const q = enterpriseQuery.value.trim().toLowerCase()
+    if (!q) return []
+    const all = Array.from(enterpriseIndex.value.keys())
+    const startsWith = all.filter(e => e.toLowerCase().startsWith(q))
+    const includes = all.filter(e => e.toLowerCase().includes(q) && !e.toLowerCase().startsWith(q))
+    return [...startsWith, ...includes].slice(0, 20)
+  })
+
+  /** 当前选中的企业所在地列表 */
+  const enterpriseMarkers = computed<{ name: string; province: string; city?: string }[]>(() => {
+    if (!selectedEnterprise.value) return []
+    return (enterpriseIndex.value.get(selectedEnterprise.value) ?? []).map(loc => ({
+      name: loc.enterprise,
+      province: loc.province,
+      city: loc.city,
+    }))
   })
 
   /** 全国汇总仪表盘数据 */
@@ -168,6 +224,15 @@ export const useMapStore = defineStore('map', () => {
     drillProvince.value = null
   }
 
+  function selectEnterprise(name: string | null) {
+    selectedEnterprise.value = name
+    if (name !== null) {
+      // 清空已有 searchHighlight 避免冲突
+      searchHighlight.value = null
+      selectedProvince.value = null
+    }
+  }
+
   return {
     overviews,
     selectedProvince,
@@ -180,6 +245,11 @@ export const useMapStore = defineStore('map', () => {
     searchQuery,
     searchResults,
     searchHighlight,
+    enterpriseQuery,
+    enterpriseResults,
+    enterpriseIndex,
+    selectedEnterprise,
+    enterpriseMarkers,
     selectedYear,
     currentYearData,
     selectedIndustry,
@@ -202,5 +272,6 @@ export const useMapStore = defineStore('map', () => {
     toggleDark,
     drillToProvince,
     resetDrill,
+    selectEnterprise,
   }
 })

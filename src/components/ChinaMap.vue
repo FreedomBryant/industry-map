@@ -35,6 +35,9 @@ function renderChart() {
     if (provData) drillCities = provData.cities
   }
 
+  // 企业标记数据
+  const entMarkers = store.enterpriseMarkers.length > 0 ? store.enterpriseMarkers : undefined
+
   const option = getMapOption(
     store.overviews,
     store.filteredProvinces,
@@ -43,6 +46,7 @@ function renderChart() {
     chain,
     store.drillProvince ?? undefined,
     drillCities,
+    entMarkers,
   )
   chart.value.setOption(option)
 }
@@ -99,6 +103,7 @@ watch(() => store.searchHighlight, renderChart)
 watch(() => store.selectedYear, renderChart)
 watch(() => store.selectedIndustry, renderChart)
 watch(() => store.drillProvince, renderChart)
+watch(() => store.selectedEnterprise, renderChart)
 watch(() => store.selectedProvince, (name) => {
   if (!chart.value) return
   chart.value.dispatchAction({

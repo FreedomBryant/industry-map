@@ -11,6 +11,7 @@
       </div>
       <div class="header-right">
         <SearchBox />
+        <EnterpriseSearch />
         <IndustryFilter />
         <button class="ds-btn" @click="store.toggleDataSource">📊 数据源</button>
         <button class="theme-btn" @click="store.toggleDark">{{ store.isDark ? '☀️' : '🌙' }}</button>
@@ -61,6 +62,7 @@ import ProvincePanel from './components/ProvincePanel.vue'
 import IndustryFilter from './components/IndustryFilter.vue'
 import ComparePanel from './components/ComparePanel.vue'
 import SearchBox from './components/SearchBox.vue'
+import EnterpriseSearch from './components/EnterpriseSearch.vue'
 import TimelineSlider from './components/TimelineSlider.vue'
 import ChainPanel from './components/ChainPanel.vue'
 import DataSourcePanel from './components/DataSourcePanel.vue'

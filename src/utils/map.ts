@@ -10,7 +10,7 @@ const COLOR_STEPS = ['#fef0d9', '#fdcc8a', '#fc8d59', '#e34a33', '#b30000', '#7f
  * china.json 的 properties.name 使用省/市/自治区全称，
  * 而数据中使用简称，需要转换后才能正确匹配并显示颜色。
  */
-const SHORT_TO_FULL: Record<string, string> = {
+export const SHORT_TO_FULL: Record<string, string> = {
   '北京': '北京市',
   '天津': '天津市',
   '上海': '上海市',
@@ -48,7 +48,7 @@ const SHORT_TO_FULL: Record<string, string> = {
 }
 
 /** 各省份近似中心坐标（用于飞线/水波纹定位） */
-const PROVINCE_COORDS: Record<string, [number, number]> = {
+export const PROVINCE_COORDS: Record<string, [number, number]> = {
   '北京': [116.4, 39.9],
   '天津': [117.2, 39.1],
   '上海': [121.5, 31.2],
@@ -88,7 +88,7 @@ const PROVINCE_COORDS: Record<string, [number, number]> = {
 /**
  * 主要城市中心坐标
  */
-const CITY_COORDS: Record<string, [number, number]> = {
+export const CITY_COORDS: Record<string, [number, number]> = {
   '北京': [116.4, 39.9],
   '天津': [117.2, 39.1],
   '上海': [121.5, 31.2],
@@ -201,6 +201,8 @@ export function getMapOption(
   chain?: IndustryChain,
   drillProvince?: string,
   drillCities?: CityIndustry[],
+  /** 企业标记：{ name, province, city? }[]，在地图上显示 pins */
+  enterpriseMarkers?: { name: string; province: string; city?: string }[],
 ) {
   const maxGdp = Math.max(...overviews.map(o => o.gdp), 100000)
   const minGdp = Math.min(...overviews.map(o => o.gdp), 0)
@@ -239,12 +241,36 @@ export function getMapOption(
     }
   }
 
+  // 企业标记散点数据
+  const enterpriseScatterData: any[] = []
+  if (enterpriseMarkers && enterpriseMarkers.length > 0) {
+    for (const marker of enterpriseMarkers) {
+      // 先按城市查找，再按省份查找
+      let coord = marker.city ? CITY_COORDS[marker.city] : undefined
+      if (!coord) coord = PROVINCE_COORDS[marker.province]
+      if (!coord) continue
+      enterpriseScatterData.push({
+        name: marker.name,
+        value: coord,
+        province: marker.province,
+        city: marker.city,
+        type: 'enterprise',
+      })
+    }
+  }
+
   return {
     tooltip: {
       trigger: 'item' as const,
       formatter: (params: any) => {
         const data = params.data
         if (!data) return ''
+        // 企业标记
+        if (data.type === 'enterprise') {
+          return `<b>${data.name}</b><br/>
+                  <span style="font-size:12px;color:#888;">${data.city || data.province}</span><br/>
+                  <span style="font-size:11px;color:#1565c0;">🏢 重点企业</span>`
+        }
         // 城市散点
         if (data.enterpriseCount !== undefined) {
           return `<b>${data.name}</b><br/>
@@ -352,6 +378,32 @@ export function getMapOption(
         },
         itemStyle: {
           color: '#ff6d00',
+          borderColor: '#fff',
+          borderWidth: 1.5,
+        },
+      }] : []),
+      ...(enterpriseScatterData.length > 0 ? [{
+        name: '企业',
+        type: 'scatter',
+        coordinateSystem: 'geo',
+        zlevel: 7,
+        data: enterpriseScatterData,
+        symbol: 'pin',
+        symbolSize: 28,
+        label: {
+          show: true,
+          formatter: '{b}',
+          fontSize: 12,
+          fontWeight: 'bold' as const,
+          color: '#c62828',
+          position: 'top' as const,
+        },
+        emphasis: {
+          label: { show: true, fontSize: 14, fontWeight: 'bold' },
+          itemStyle: { borderColor: '#fff', borderWidth: 2 },
+        },
+        itemStyle: {
+          color: '#d32f2f',
           borderColor: '#fff',
           borderWidth: 1.5,
         },
