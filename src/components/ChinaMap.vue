@@ -7,6 +7,7 @@ import { ref, onMounted, onUnmounted, watch, shallowRef } from 'vue'
 import * as echarts from 'echarts'
 import { getMapOption } from '../utils/map'
 import { useMapStore } from '../stores/mapStore'
+import { getChainById } from '../data/industryChains'
 
 const store = useMapStore()
 
@@ -22,7 +23,8 @@ async function registerMap() {
 
 function renderChart() {
   if (!chart.value || store.overviews.length === 0) return
-  const option = getMapOption(store.overviews, store.filteredProvinces, store.compareProvinces, store.searchHighlight ?? undefined)
+  const chain = store.selectedIndustry ? getChainById(store.selectedIndustry) : undefined
+  const option = getMapOption(store.overviews, store.filteredProvinces, store.compareProvinces, store.searchHighlight ?? undefined, chain)
   chart.value.setOption(option)
 }
 
@@ -58,6 +60,7 @@ watch(() => store.filteredProvinces, renderChart, { deep: true })
 watch(() => store.compareProvinces, renderChart, { deep: true })
 watch(() => store.searchHighlight, renderChart)
 watch(() => store.selectedYear, renderChart)
+watch(() => store.selectedIndustry, renderChart)
 watch(() => store.selectedProvince, (name) => {
   if (!chart.value) return
   chart.value.dispatchAction({

@@ -1,5 +1,6 @@
 import * as echarts from 'echarts'
 import type { ProvinceOverview } from '../types'
+import type { IndustryChain } from '../data/industryChains'
 
 /** 色阶颜色（低→高：从浅黄到深红褐） */
 const COLOR_STEPS = ['#fef0d9', '#fdcc8a', '#fc8d59', '#e34a33', '#b30000', '#7f0000']
@@ -46,6 +47,49 @@ const SHORT_TO_FULL: Record<string, string> = {
   '台湾': '台湾省',
 }
 
+/** 各省份近似中心坐标（用于飞线/水波纹定位） */
+const PROVINCE_COORDS: Record<string, [number, number]> = {
+  '北京': [116.4, 39.9],
+  '天津': [117.2, 39.1],
+  '上海': [121.5, 31.2],
+  '重庆': [106.5, 29.6],
+  '河北': [114.5, 38.0],
+  '山西': [112.5, 37.9],
+  '内蒙古': [111.8, 40.8],
+  '辽宁': [123.4, 41.8],
+  '吉林': [125.3, 43.9],
+  '黑龙江': [126.6, 45.8],
+  '江苏': [119.8, 33.0],
+  '浙江': [120.2, 30.3],
+  '安徽': [117.3, 31.8],
+  '福建': [119.3, 26.1],
+  '江西': [115.9, 27.6],
+  '山东': [117.0, 36.7],
+  '河南': [113.7, 33.9],
+  '湖北': [112.4, 30.6],
+  '湖南': [112.0, 27.1],
+  '广东': [113.3, 23.1],
+  '广西': [108.4, 22.8],
+  '海南': [110.0, 19.2],
+  '四川': [104.0, 30.6],
+  '贵州': [106.7, 26.6],
+  '云南': [102.7, 25.0],
+  '西藏': [89.1, 31.5],
+  '陕西': [108.9, 34.3],
+  '甘肃': [103.8, 36.0],
+  '青海': [96.0, 36.0],
+  '宁夏': [106.3, 37.5],
+  '新疆': [85.6, 42.1],
+  '香港': [114.2, 22.3],
+  '澳门': [113.5, 22.2],
+  '台湾': [121.0, 24.0],
+}
+
+/** 飞线颜色 */
+const FLY_LINE_COLOR = '#ff9800'
+const FLY_LINE_COLOR_DIM = '#ffcc80'
+
+
 /**
  * 获取中国地图的 ECharts option
  */
@@ -54,6 +98,7 @@ export function getMapOption(
   filteredProvinces?: string[],
   compareProvinces?: string[],
   highlightProvince?: string,
+  chain?: IndustryChain,
 ) {
   const maxGdp = Math.max(...overviews.map(o => o.gdp), 100000)
   const minGdp = Math.min(...overviews.map(o => o.gdp), 0)
@@ -145,6 +190,7 @@ export function getMapOption(
           }
         }),
       },
+      ...(chain ? getChainFlyLines(chain) : []),
     ],
   }
 }
@@ -213,4 +259,59 @@ export function getIndustryBarOption(industries: { name: string; output: number 
       },
     ],
   }
+}
+
+/**
+ * 根据产业链数据生成飞线动效系列（ECharts lines 系列）
+ * 将链上下游 node 之间的省份连接绘制为带轨迹动画的飞线
+ */
+function getChainFlyLines(chain: IndustryChain): any[] {
+  const nodeMap = new Map(chain.nodes.map(n => [n.name, n]))
+  const lines: any[] = []
+
+  for (const link of chain.links) {
+    const srcNode = nodeMap.get(link.source)
+    const tgtNode = nodeMap.get(link.target)
+    if (!srcNode || !tgtNode) continue
+
+    const srcProvinces = srcNode.provinces.filter(p => PROVINCE_COORDS[p])
+    const tgtProvinces = tgtNode.provinces.filter(p => PROVINCE_COORDS[p])
+
+    for (const sp of srcProvinces) {
+      for (const tp of tgtProvinces) {
+        if (sp === tp) continue
+        lines.push({
+          coords: [PROVINCE_COORDS[sp], PROVINCE_COORDS[tp]],
+          lineStyle: {
+            opacity: Math.max(0.15, link.intensity / 100),
+            width: link.intensity / 15,
+          },
+        })
+      }
+    }
+  }
+
+  if (lines.length === 0) return []
+
+  return [
+    {
+      type: 'lines',
+      coordinateSystem: 'geo',
+      zlevel: 5,
+      data: lines,
+      lineStyle: {
+        curveness: 0.3,
+        color: FLY_LINE_COLOR,
+      },
+      effect: {
+        show: true,
+        trailLength: 0.25,
+        period: 6,
+        symbol: 'arrow',
+        symbolSize: 6,
+        color: FLY_LINE_COLOR_DIM,
+      },
+      blendMode: 'source-over',
+    },
+  ]
 }
