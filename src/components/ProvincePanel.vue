@@ -1,9 +1,11 @@
 <template>
-  <div class="panel-wrapper">
+  <div ref="panelRef" class="panel-wrapper">
     <!-- 头部 -->
     <div class="panel-header">
       <h2>{{ store.selectedProvinceData!.province }}</h2>
       <div class="header-actions">
+        <button class="export-btn" title="导出为图片" @click="exportPNG">🖼</button>
+        <button class="export-btn" title="导出为 PDF" @click="exportPDF">📄</button>
         <button
           class="compare-btn"
           :class="{ active: store.compareProvinces.includes(store.selectedProvinceData!.province) }"
@@ -98,14 +100,55 @@ import VChart from 'vue-echarts'
 import 'echarts'
 import { getIndustryPieOption, getIndustryBarOption } from '../utils/map'
 import { useMapStore } from '../stores/mapStore'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 defineEmits<{ (e: 'close'): void }>()
 
 const store = useMapStore()
 const selectedCity = ref<string | null>(null)
+const panelRef = ref<HTMLElement | null>(null)
 
 const pieOption = computed(() => getIndustryPieOption(store.selectedProvinceData!.industries))
 const barOption = computed(() => getIndustryBarOption(store.selectedProvinceData!.industries))
+
+async function exportPNG() {
+  if (!panelRef.value) return
+  const canvas = await html2canvas(panelRef.value, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+    useCORS: true,
+  })
+  const link = document.createElement('a')
+  link.download = `${store.selectedProvinceData!.province}_产业地图.png`
+  link.href = canvas.toDataURL()
+  link.click()
+}
+
+async function exportPDF() {
+  if (!panelRef.value) return
+  const canvas = await html2canvas(panelRef.value, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+    useCORS: true,
+  })
+  const imgData = canvas.toDataURL('image/png')
+  const pdf = new jsPDF('p', 'mm', 'a4')
+  const pdfW = pdf.internal.pageSize.getWidth()
+  const pdfH = (canvas.height * pdfW) / canvas.width
+  let heightLeft = pdfH
+  let position = 0
+  const pageHeight = pdf.internal.pageSize.getHeight()
+  pdf.addImage(imgData, 'PNG', 0, position, pdfW, pdfH)
+  heightLeft -= pageHeight
+  while (heightLeft > 0) {
+    position = heightLeft - pdfH
+    pdf.addPage()
+    pdf.addImage(imgData, 'PNG', 0, position, pdfW, pdfH)
+    heightLeft -= pageHeight
+  }
+  pdf.save(`${store.selectedProvinceData!.province}_产业地图.pdf`)
+}
 </script>
 
 <style scoped>
@@ -151,6 +194,25 @@ const barOption = computed(() => getIndustryBarOption(store.selectedProvinceData
   background: #e8f5e9;
   border-color: #43a047;
   color: #1b5e20;
+}
+
+.export-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.export-btn:hover {
+  background: #f5f5f5;
+  border-color: #bdbdbd;
 }
 
 .close-btn {
