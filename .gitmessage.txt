@@ -1,4 +1,0 @@
-refactor: pinia  
-  
-Created mapStore.ts, migrated all components to use store directly.  
-Co-Authored-By: AtomCode <noreply@atomgit.com>  
