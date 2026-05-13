@@ -2,8 +2,11 @@
   <div class="app-container">
     <!-- 标题栏 -->
     <header class="app-header">
-      <h1>🗺️ 中国产业地图</h1>
-      <span class="subtitle">China Industry Map</span>
+      <div class="header-left">
+        <h1>🗺️ 中国产业地图</h1>
+        <span class="subtitle">China Industry Map</span>
+      </div>
+      <IndustryFilter />
     </header>
 
     <div class="app-body">
@@ -32,6 +35,7 @@
 import { onMounted } from 'vue'
 import ChinaMap from './components/ChinaMap.vue'
 import ProvincePanel from './components/ProvincePanel.vue'
+import IndustryFilter from './components/IndustryFilter.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()
@@ -53,11 +57,19 @@ onMounted(() => {
 .app-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 16px;
   padding: 12px 24px;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .app-header h1 {

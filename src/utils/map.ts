@@ -51,10 +51,12 @@ const SHORT_TO_FULL: Record<string, string> = {
  */
 export function getMapOption(
   overviews: ProvinceOverview[],
-  selectedCategory?: string,
+  filteredProvinces?: string[],
 ) {
   const maxGdp = Math.max(...overviews.map(o => o.gdp), 100000)
   const minGdp = Math.min(...overviews.map(o => o.gdp), 0)
+
+  const isFiltering = filteredProvinces !== undefined && filteredProvinces.length > 0
 
   return {
     tooltip: {
@@ -105,14 +107,18 @@ export function getMapOption(
           label: { fontSize: 14, fontWeight: 'bold' },
           itemStyle: { areaColor: '#ffd54f' },
         },
-        data: overviews.map(o => ({
-          name: SHORT_TO_FULL[o.province] || o.province,
-          value: o.gdp,
-          province: o.province,        // 保留原始简称供 tooltip 查找
-          fullName: o.province,         // tooltip 显示简称（更简洁）
-          mainIndustry: o.mainIndustry,
-          gdp: o.gdp,
-        })),
+        data: overviews.map(o => {
+          const matched = !isFiltering || filteredProvinces.includes(o.province)
+          return {
+            name: SHORT_TO_FULL[o.province] || o.province,
+            value: o.gdp,
+            province: o.province,
+            fullName: o.province,
+            mainIndustry: o.mainIndustry,
+            gdp: o.gdp,
+            itemStyle: matched ? undefined : { areaColor: '#e0e0e0' },
+          }
+        }),
       },
     ],
   }
