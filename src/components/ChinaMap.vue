@@ -22,7 +22,7 @@ async function registerMap() {
 
 function renderChart() {
   if (!chart.value || store.overviews.length === 0) return
-  const option = getMapOption(store.overviews, store.filteredProvinces)
+  const option = getMapOption(store.overviews, store.filteredProvinces, store.compareProvinces)
   chart.value.setOption(option)
 }
 
@@ -55,6 +55,7 @@ function handleResize() {
 
 watch(() => store.overviews, renderChart, { deep: true })
 watch(() => store.filteredProvinces, renderChart, { deep: true })
+watch(() => store.compareProvinces, renderChart, { deep: true })
 watch(() => store.selectedProvince, (name) => {
   if (!chart.value) return
   chart.value.dispatchAction({

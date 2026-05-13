@@ -28,6 +28,9 @@
         </div>
       </aside>
     </div>
+
+    <!-- 底部对比面板 -->
+    <ComparePanel />
   </div>
 </template>
 
@@ -36,6 +39,7 @@ import { onMounted } from 'vue'
 import ChinaMap from './components/ChinaMap.vue'
 import ProvincePanel from './components/ProvincePanel.vue'
 import IndustryFilter from './components/IndustryFilter.vue'
+import ComparePanel from './components/ComparePanel.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()

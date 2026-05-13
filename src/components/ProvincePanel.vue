@@ -3,7 +3,16 @@
     <!-- 头部 -->
     <div class="panel-header">
       <h2>{{ store.selectedProvinceData!.province }}</h2>
-      <button class="close-btn" @click="$emit('close')">✕</button>
+      <div class="header-actions">
+        <button
+          class="compare-btn"
+          :class="{ active: store.compareProvinces.includes(store.selectedProvinceData!.province) }"
+          @click="store.toggleCompareProvince(store.selectedProvinceData!.province)"
+        >
+          {{ store.compareProvinces.includes(store.selectedProvinceData!.province) ? '✓ 已对比' : '➕ 对比' }}
+        </button>
+        <button class="close-btn" @click="$emit('close')">✕</button>
+      </div>
     </div>
 
     <!-- GDP 概览 -->
@@ -102,6 +111,34 @@ const barOption = computed(() => getIndustryBarOption(store.selectedProvinceData
 
 .panel-header h2 {
   font-size: 22px;
+  color: #1b5e20;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.compare-btn {
+  padding: 4px 10px;
+  border: 1px solid #81c784;
+  border-radius: 14px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #fff;
+  color: #2e7d32;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.compare-btn:hover {
+  background: #e8f5e9;
+}
+
+.compare-btn.active {
+  background: #e8f5e9;
+  border-color: #43a047;
   color: #1b5e20;
 }
 

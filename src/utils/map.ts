@@ -52,11 +52,13 @@ const SHORT_TO_FULL: Record<string, string> = {
 export function getMapOption(
   overviews: ProvinceOverview[],
   filteredProvinces?: string[],
+  compareProvinces?: string[],
 ) {
   const maxGdp = Math.max(...overviews.map(o => o.gdp), 100000)
   const minGdp = Math.min(...overviews.map(o => o.gdp), 0)
 
   const isFiltering = filteredProvinces !== undefined && filteredProvinces.length > 0
+  const isComparing = compareProvinces !== undefined && compareProvinces.length > 0
 
   return {
     tooltip: {
@@ -109,6 +111,16 @@ export function getMapOption(
         },
         data: overviews.map(o => {
           const matched = !isFiltering || filteredProvinces.includes(o.province)
+          const isCompared = isComparing && compareProvinces.includes(o.province)
+          let itemStyle: any = matched ? undefined : { areaColor: '#e0e0e0' }
+          if (isCompared) {
+            itemStyle = {
+              ...(itemStyle || {}),
+              borderColor: '#1565c0',
+              borderWidth: 3,
+              borderType: 'solid' as const,
+            }
+          }
           return {
             name: SHORT_TO_FULL[o.province] || o.province,
             value: o.gdp,
@@ -116,7 +128,7 @@ export function getMapOption(
             fullName: o.province,
             mainIndustry: o.mainIndustry,
             gdp: o.gdp,
-            itemStyle: matched ? undefined : { areaColor: '#e0e0e0' },
+            itemStyle,
           }
         }),
       },
