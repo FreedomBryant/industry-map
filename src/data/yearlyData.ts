@@ -44,9 +44,9 @@ const YEAR_NOISE: Record<number, number> = {
 }
 
 /** 支持的年份 */
-export const AVAILABLE_YEARS = [2020, 2021, 2022, 2023, 2024] as const
+export const AVAILABLE_YEARS = [2020, 2021, 2022, 2023, 2024, 2025] as const
 export type AvailableYear = (typeof AVAILABLE_YEARS)[number]
-export const DEFAULT_YEAR: AvailableYear = 2024
+export const DEFAULT_YEAR: AvailableYear = 2025
 
 /**
  * 生成指定年份的各省数据

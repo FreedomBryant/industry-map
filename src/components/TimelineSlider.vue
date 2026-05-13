@@ -38,7 +38,7 @@ const currentIndex = computed(() => years.indexOf(store.selectedYear))
 
 const label = computed(() => {
   const y = store.selectedYear
-  return `${y} 年${y === 2024 ? '（最新）' : ''} · GDP 总量 ${totalGdp.value.toFixed(1)} 万亿元`
+  return `${y} 年${y === 2025 ? '（最新）' : ''} · GDP 总量 ${totalGdp.value.toFixed(1)} 万亿元`
 })
 
 const totalGdp = computed(() => {
