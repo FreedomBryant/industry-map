@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { getProvinceOverviews, getProvinceByName, provinceData } from '../data'
+import { getProvinceOverviews, getProvinceByName, provinceData, DEFAULT_YEAR } from '../data'
+import type { AvailableYear } from '../data'
 import type { ProvinceOverview, ProvinceIndustry, IndustryCategory } from '../types'
 
 export const useMapStore = defineStore('map', () => {
@@ -15,16 +16,31 @@ export const useMapStore = defineStore('map', () => {
   const searchQuery = ref('')
   /** 搜索高亮的省份名 */
   const searchHighlight = ref<string | null>(null)
+  /** 当前选择年份（默认 2024） */
+  const selectedYear = ref<AvailableYear>(DEFAULT_YEAR)
+
+  /** 当前年份的完整省份数据 */
+  const currentYearData = computed<ProvinceIndustry[]>(() => {
+    return getProvinceByName(provinceData[0]?.province ?? '', selectedYear.value)
+      ? provinceData.map(p => getProvinceByName(p.province, selectedYear.value) ?? p)
+      : provinceData
+  })
 
   // === Getters ===
   const selectedProvinceData = computed<ProvinceIndustry | null>(() => {
     if (!selectedProvince.value) return null
-    return getProvinceByName(selectedProvince.value) ?? null
+    return getProvinceByName(selectedProvince.value, selectedYear.value) ?? null
   })
 
   /** 匹配当前筛选产业的省份简称列表 */
   const filteredProvinces = computed<string[]>(() => {
     if (!selectedCategory.value) return []
+    const yearData = selectedYear.value
+      ? (() => { const d = getProvinceByName(provinceData[0]?.province ?? '', selectedYear.value)
+                 return d ? getProvinceOverviews(selectedYear.value)
+                           : getProvinceOverviews() } )()
+      : getProvinceOverviews()
+    // Reuse provinceData for filtering since categories don't change by year
     return provinceData
       .filter(p => p.industries.some(i => i.category === selectedCategory.value))
       .map(p => p.province)
@@ -33,7 +49,7 @@ export const useMapStore = defineStore('map', () => {
   /** 待对比省份的完整数据 */
   const compareProvinceData = computed<ProvinceIndustry[]>(() => {
     return compareProvinces.value
-      .map(name => getProvinceByName(name))
+      .map(name => getProvinceByName(name, selectedYear.value))
       .filter((p): p is ProvinceIndustry => p !== undefined)
   })
 
@@ -83,14 +99,19 @@ export const useMapStore = defineStore('map', () => {
     compareProvinces.value = []
   }
 
-  function loadData() {
-    overviews.value = getProvinceOverviews()
+  function loadData(year?: AvailableYear) {
+    overviews.value = getProvinceOverviews(year ?? selectedYear.value)
   }
 
   function searchProvince(name: string) {
     searchQuery.value = ''
     searchHighlight.value = name
     selectedProvince.value = name
+  }
+
+  function setYear(year: AvailableYear) {
+    selectedYear.value = year
+    overviews.value = getProvinceOverviews(year)
   }
 
   return {
@@ -105,6 +126,8 @@ export const useMapStore = defineStore('map', () => {
     searchQuery,
     searchResults,
     searchHighlight,
+    selectedYear,
+    currentYearData,
     selectProvince,
     toggleProvince,
     hoverProvince,
@@ -114,5 +137,6 @@ export const useMapStore = defineStore('map', () => {
     clearCompare,
     loadData,
     searchProvince,
+    setYear,
   }
 })

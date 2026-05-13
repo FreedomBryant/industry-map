@@ -1,4 +1,6 @@
 import type { ProvinceIndustry, ProvinceOverview, IndustryCategory } from '../types'
+import { getAllYearlyData, DEFAULT_YEAR } from './yearlyData'
+import type { AvailableYear } from './yearlyData'
 
 // 静态引入所有分片数据
 import { provinceData as p1 } from './provinces1'
@@ -6,7 +8,7 @@ import { provinceDataPart2 as p2 } from './provinces2'
 import { provinceDataPart3 as p3 } from './provinces3'
 import { provinceDataPart4 as p4 } from './provinces4'
 
-/** 所有省份产业数据（完整） */
+/** 所有省份产业数据（完整，2025 年基线） */
 export const provinceData: ProvinceIndustry[] = [...p1, ...p2, ...p3, ...p4]
 
 /** 所有产业分类 */
@@ -27,14 +29,22 @@ export function calcProvinceIndex(p: ProvinceIndustry): number {
   return Math.min(Math.round(gdpScore + diversityScore + highTechScore), 100)
 }
 
-/** 获取省份概览列表（用于热力图） */
-export function getProvinceOverviews(): ProvinceOverview[] {
-  return provinceData.map(p => ({
+/** 获取指定年份的省份概览列表（用于热力图） */
+export function getProvinceOverviews(year?: AvailableYear): ProvinceOverview[] {
+  const data = year ? getAllYearlyData()[year] : provinceData
+  return data.map(p => ({
     province: p.province,
     index: calcProvinceIndex(p),
     gdp: p.gdp,
     mainIndustry: [...p.industries].sort((a, b) => b.output - a.output)[0]?.name || '',
   }))
+}
+
+/** 根据省份名和年份查找数据 */
+export function getProvinceByName(name: string, year?: AvailableYear): ProvinceIndustry | undefined {
+  const normalized = normalizeProvinceName(name)
+  const dataset = year ? getAllYearlyData()[year] : provinceData
+  return dataset.find(p => p.province === normalized)
 }
 
 /** 省份名称映射（GeoJSON 全称 → 数据简称） */
@@ -59,10 +69,6 @@ function normalizeProvinceName(name: string): string {
   return name.replace(/[省市]$/, '')
 }
 
-/** 根据省份名查找数据 */
-export function getProvinceByName(name: string): ProvinceIndustry | undefined {
-  const normalized = normalizeProvinceName(name)
-  return provinceData.find(p => p.province === normalized)
-}
-
+export { DEFAULT_YEAR }
+export type { AvailableYear }
 export { provinceData as default }

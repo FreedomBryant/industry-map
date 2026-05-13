@@ -25,6 +25,7 @@ export interface CityIndustry {
   gdp: number          // GDP（亿元）
   industries: IndustryItem[]
   keyEnterprises: string[]
+  year?: number        // 数据年份
 }
 
 /** 省份产业数据 */
@@ -34,6 +35,7 @@ export interface ProvinceIndustry {
   industries: IndustryItem[]
   keyEnterprises: string[]
   cities: CityIndustry[]
+  year?: number        // 数据年份
 }
 
 /** 产业概况（用于热力图） */

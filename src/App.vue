@@ -6,8 +6,13 @@
         <h1>🗺️ 中国产业地图</h1>
         <span class="subtitle">China Industry Map</span>
       </div>
-      <SearchBox />
-      <IndustryFilter />
+      <div class="header-center">
+        <TimelineSlider />
+      </div>
+      <div class="header-right">
+        <SearchBox />
+        <IndustryFilter />
+      </div>
     </header>
 
     <div class="app-body">
@@ -42,6 +47,7 @@ import ProvincePanel from './components/ProvincePanel.vue'
 import IndustryFilter from './components/IndustryFilter.vue'
 import ComparePanel from './components/ComparePanel.vue'
 import SearchBox from './components/SearchBox.vue'
+import TimelineSlider from './components/TimelineSlider.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()
@@ -63,7 +69,6 @@ onMounted(() => {
 .app-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   padding: 12px 24px;
   background: #fff;
@@ -74,6 +79,19 @@ onMounted(() => {
 .header-left {
   display: flex;
   align-items: baseline;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
   gap: 12px;
   flex-shrink: 0;
 }

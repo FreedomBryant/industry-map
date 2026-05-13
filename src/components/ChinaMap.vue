@@ -57,6 +57,7 @@ watch(() => store.overviews, renderChart, { deep: true })
 watch(() => store.filteredProvinces, renderChart, { deep: true })
 watch(() => store.compareProvinces, renderChart, { deep: true })
 watch(() => store.searchHighlight, renderChart)
+watch(() => store.selectedYear, renderChart)
 watch(() => store.selectedProvince, (name) => {
   if (!chart.value) return
   chart.value.dispatchAction({
