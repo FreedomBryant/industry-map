@@ -203,6 +203,8 @@ export function getMapOption(
   drillCities?: CityIndustry[],
   /** 企业标记：{ name, province, city? }[]，在地图上显示 pins */
   enterpriseMarkers?: { name: string; province: string; city?: string }[],
+  /** 园区标记：{ name, province, city, type }[]，在地图上显示 pins */
+  parkMarkers?: { name: string; province: string; city: string; type: string }[],
 ) {
   const maxGdp = Math.max(...overviews.map(o => o.gdp), 100000)
   const minGdp = Math.min(...overviews.map(o => o.gdp), 0)
@@ -259,6 +261,26 @@ export function getMapOption(
     }
   }
 
+  // 园区标记散点数据
+  const parkScatterData: any[] = []
+  if (parkMarkers && parkMarkers.length > 0) {
+    for (const marker of parkMarkers) {
+      let coord = marker.city ? CITY_COORDS[marker.city] : undefined
+      if (!coord) coord = PROVINCE_COORDS[marker.province]
+      if (!coord) continue
+      parkScatterData.push({
+        name: marker.name,
+        value: coord,
+        province: marker.province,
+        city: marker.city,
+        type: marker.type === '高新区' ? 'park_tech' : 'park_economic',
+        itemStyle: {
+          color: marker.type === '高新区' ? '#7b1fa2' : '#e65100',
+        },
+      })
+    }
+  }
+
   return {
     tooltip: {
       trigger: 'item' as const,
@@ -270,6 +292,14 @@ export function getMapOption(
           return `<b>${data.name}</b><br/>
                   <span style="font-size:12px;color:#888;">${data.city || data.province}</span><br/>
                   <span style="font-size:11px;color:#1565c0;">🏢 重点企业</span>`
+        }
+        // 园区标记
+        if (data.type === 'park_tech' || data.type === 'park_economic') {
+          const typeLabel = data.type === 'park_tech' ? '国家级高新区' : '国家级经开区'
+          const color = data.type === 'park_tech' ? '#7b1fa2' : '#e65100'
+          return `<b>${data.name}</b><br/>
+                  <span style="font-size:12px;color:#888;">${data.city}，${data.province}</span><br/>
+                  <span style="font-size:11px;color:${color};">🏭 ${typeLabel}</span>`
         }
         // 城市散点
         if (data.enterpriseCount !== undefined) {
@@ -404,6 +434,26 @@ export function getMapOption(
         },
         itemStyle: {
           color: '#d32f2f',
+          borderColor: '#fff',
+          borderWidth: 1.5,
+        },
+      }] : []),
+      ...(parkScatterData.length > 0 ? [{
+        name: '园区',
+        type: 'scatter',
+        coordinateSystem: 'geo',
+        zlevel: 8,
+        data: parkScatterData,
+        symbol: 'diamond',
+        symbolSize: 14,
+        label: {
+          show: false,
+        },
+        emphasis: {
+          label: { show: true, fontSize: 12, fontWeight: 'bold' },
+          itemStyle: { borderColor: '#fff', borderWidth: 2 },
+        },
+        itemStyle: {
           borderColor: '#fff',
           borderWidth: 1.5,
         },

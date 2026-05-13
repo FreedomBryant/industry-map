@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import { getProvinceOverviews, getProvinceByName, provinceData, DEFAULT_YEAR } from '../data'
 import type { AvailableYear } from '../data'
 import type { ProvinceOverview, ProvinceIndustry, IndustryCategory } from '../types'
+import { INDUSTRIAL_PARKS } from '../data/industrialParks'
+import type { IndustrialPark } from '../data/industrialParks'
 
 export interface DashboardSummary {
   totalGDP: number           // 全国 GDP 总量（亿元）
@@ -46,6 +48,9 @@ export const useMapStore = defineStore('map', () => {
 
   /** 数据源说明面板是否可见 */
   const showDataSource = ref(false)
+
+  /** 是否显示园区/开发区标记 */
+  const showParks = ref(false)
 
   /** 当前年份的完整省份数据 */
   const currentYearData = computed<ProvinceIndustry[]>(() => {
@@ -135,6 +140,17 @@ export const useMapStore = defineStore('map', () => {
     }))
   })
 
+  /** 园区/开发区标记数据 */
+  const parkMarkers = computed<{ name: string; province: string; city: string; type: string }[]>(() => {
+    if (!showParks.value) return []
+    return INDUSTRIAL_PARKS.map(p => ({
+      name: p.name,
+      province: p.province,
+      city: p.city,
+      type: p.type,
+    }))
+  })
+
   /** 全国汇总仪表盘数据 */
   const dashboardSummary = computed<DashboardSummary>(() => {
     const ov = overviews.value
@@ -212,6 +228,10 @@ export const useMapStore = defineStore('map', () => {
     showDataSource.value = !showDataSource.value
   }
 
+  function toggleParks() {
+    showParks.value = !showParks.value
+  }
+
   function toggleDark() {
     isDark.value = !isDark.value
   }
@@ -255,7 +275,9 @@ export const useMapStore = defineStore('map', () => {
     selectedIndustry,
     isDark,
     showDataSource,
+    showParks,
     dashboardSummary,
+    parkMarkers,
     drillProvince,
     selectProvince,
     toggleProvince,
@@ -269,6 +291,7 @@ export const useMapStore = defineStore('map', () => {
     setYear,
     selectIndustry,
     toggleDataSource,
+    toggleParks,
     toggleDark,
     drillToProvince,
     resetDrill,
