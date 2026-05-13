@@ -140,8 +140,6 @@ onMounted(() => {
   position: relative;
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 12px;
   min-width: 0;
 }

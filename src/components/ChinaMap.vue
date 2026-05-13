@@ -1,8 +1,10 @@
 <template>
-  <div ref="chartRef" class="map-chart"></div>
-  <button v-if="store.drillProvince" class="drill-back" @click="store.resetDrill(); store.selectProvince(null)">
-    ← 返回全国
-  </button>
+  <div class="map-wrapper">
+    <div ref="chartRef" class="map-chart"></div>
+    <button v-if="store.drillProvince" class="drill-back" @click="store.resetDrill(); store.selectProvince(null)">
+      ← 返回全国
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -126,6 +128,11 @@ watch(() => store.selectedProvince, (name) => {
 </script>
 
 <style scoped>
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 .map-chart {
   width: 100%;
   height: 100%;
