@@ -20,6 +20,8 @@ export const useMapStore = defineStore('map', () => {
   const selectedYear = ref<AvailableYear>(DEFAULT_YEAR)
   /** 当前查看的产业链（null 表示关闭） */
   const selectedIndustry = ref<string | null>(null)
+  /** 数据源说明面板是否可见 */
+  const showDataSource = ref(false)
 
   /** 当前年份的完整省份数据 */
   const currentYearData = computed<ProvinceIndustry[]>(() => {
@@ -120,6 +122,10 @@ export const useMapStore = defineStore('map', () => {
     selectedIndustry.value = name
   }
 
+  function toggleDataSource() {
+    showDataSource.value = !showDataSource.value
+  }
+
   return {
     overviews,
     selectedProvince,
@@ -135,6 +141,7 @@ export const useMapStore = defineStore('map', () => {
     selectedYear,
     currentYearData,
     selectedIndustry,
+    showDataSource,
     selectProvince,
     toggleProvince,
     hoverProvince,
@@ -146,5 +153,6 @@ export const useMapStore = defineStore('map', () => {
     searchProvince,
     setYear,
     selectIndustry,
+    toggleDataSource,
   }
 })

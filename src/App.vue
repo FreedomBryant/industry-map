@@ -12,6 +12,7 @@
       <div class="header-right">
         <SearchBox />
         <IndustryFilter />
+        <button class="ds-btn" @click="store.toggleDataSource">📊 数据源</button>
       </div>
     </header>
 
@@ -40,6 +41,9 @@
 
     <!-- 产业链弹窗 -->
     <ChainPanel />
+
+    <!-- 数据源说明 -->
+    <DataSourcePanel />
   </div>
 </template>
 
@@ -52,6 +56,7 @@ import ComparePanel from './components/ComparePanel.vue'
 import SearchBox from './components/SearchBox.vue'
 import TimelineSlider from './components/TimelineSlider.vue'
 import ChainPanel from './components/ChainPanel.vue'
+import DataSourcePanel from './components/DataSourcePanel.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()
@@ -156,5 +161,22 @@ onMounted(() => {
 
 .empty-panel p {
   font-size: 14px;
+}
+
+.ds-btn {
+  padding: 6px 14px;
+  border: 1px solid #c8e6c9;
+  border-radius: 16px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  color: #2e7d32;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ds-btn:hover {
+  background: #e8f5e9;
+  border-color: #81c784;
 }
 </style>
