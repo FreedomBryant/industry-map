@@ -9,20 +9,14 @@
     <div class="app-body">
       <!-- 左侧地图区 -->
       <div class="map-area">
-        <ChinaMap
-          :overviews="overviews"
-          :selected-province="selectedProvince"
-          @province-click="onProvinceClick"
-          @province-hover="onProvinceHover"
-        />
+        <ChinaMap />
       </div>
 
       <!-- 右侧详情面板 -->
-      <aside class="side-panel" :class="{ active: !!selectedProvince }">
+      <aside class="side-panel" :class="{ active: !!store.selectedProvince }">
         <ProvincePanel
-          v-if="selectedProvinceData"
-          :data="selectedProvinceData"
-          @close="selectedProvince = null"
+          v-if="store.selectedProvinceData"
+          @close="store.selectProvince(null)"
         />
         <div v-else class="empty-panel">
           <div class="empty-icon">👆</div>
@@ -35,31 +29,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import ChinaMap from './components/ChinaMap.vue'
 import ProvincePanel from './components/ProvincePanel.vue'
-import { provinceData, getProvinceOverviews, getProvinceByName } from './data'
-import type { ProvinceOverview, ProvinceIndustry } from './types'
+import { useMapStore } from './stores/mapStore'
 
-const overviews = ref<ProvinceOverview[]>([])
-const selectedProvince = ref<string | null>(null)
-const hoveredProvince = ref<string | null>(null)
-
-const selectedProvinceData = computed(() => {
-  if (!selectedProvince.value) return null
-  return getProvinceByName(selectedProvince.value) || null
-})
-
-function onProvinceClick(name: string) {
-  selectedProvince.value = selectedProvince.value === name ? null : name
-}
-
-function onProvinceHover(name: string | null) {
-  hoveredProvince.value = name
-}
+const store = useMapStore()
 
 onMounted(() => {
-  overviews.value = getProvinceOverviews()
+  store.loadData()
 })
 </script>
 

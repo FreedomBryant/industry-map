@@ -2,14 +2,14 @@
   <div class="panel-wrapper">
     <!-- 头部 -->
     <div class="panel-header">
-      <h2>{{ data.province }}</h2>
+      <h2>{{ store.selectedProvinceData!.province }}</h2>
       <button class="close-btn" @click="$emit('close')">✕</button>
     </div>
 
     <!-- GDP 概览 -->
     <div class="gdp-banner">
       <span class="gdp-label">GDP</span>
-      <span class="gdp-value">{{ (data.gdp / 10000).toFixed(2) }} 万亿元</span>
+      <span class="gdp-value">{{ (store.selectedProvinceData!.gdp / 10000).toFixed(2) }} 万亿元</span>
     </div>
 
     <!-- 主导产业 -->
@@ -36,7 +36,7 @@
     <section class="panel-section">
       <h3>🏢 重点企业</h3>
       <div class="enterprise-list">
-        <span v-for="e in data.keyEnterprises" :key="e" class="tag">{{ e }}</span>
+        <span v-for="e in store.selectedProvinceData!.keyEnterprises" :key="e" class="tag">{{ e }}</span>
       </div>
     </section>
 
@@ -45,7 +45,7 @@
       <h3>📍 主要城市</h3>
       <div class="city-list">
         <div
-          v-for="city in data.cities"
+          v-for="city in store.selectedProvinceData!.cities"
           :key="city.name"
           class="city-card"
           @click="selectedCity = selectedCity === city.name ? null : city.name"
@@ -77,18 +77,15 @@ import { ref, computed } from 'vue'
 import VChart from 'vue-echarts'
 import 'echarts'
 import { getIndustryPieOption, getIndustryBarOption } from '../utils/map'
-import type { ProvinceIndustry } from '../types'
-
-const props = defineProps<{
-  data: ProvinceIndustry
-}>()
+import { useMapStore } from '../stores/mapStore'
 
 defineEmits<{ (e: 'close'): void }>()
 
+const store = useMapStore()
 const selectedCity = ref<string | null>(null)
 
-const pieOption = computed(() => getIndustryPieOption(props.data.industries))
-const barOption = computed(() => getIndustryBarOption(props.data.industries))
+const pieOption = computed(() => getIndustryPieOption(store.selectedProvinceData!.industries))
+const barOption = computed(() => getIndustryBarOption(store.selectedProvinceData!.industries))
 </script>
 
 <style scoped>

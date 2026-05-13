@@ -6,17 +6,9 @@
 import { ref, onMounted, onUnmounted, watch, shallowRef } from 'vue'
 import * as echarts from 'echarts'
 import { getMapOption } from '../utils/map'
-import type { ProvinceOverview } from '../types'
+import { useMapStore } from '../stores/mapStore'
 
-const props = defineProps<{
-  overviews: ProvinceOverview[]
-  selectedProvince: string | null
-}>()
-
-const emit = defineEmits<{
-  (e: 'province-click', name: string): void
-  (e: 'province-hover', name: string | null): void
-}>()
+const store = useMapStore()
 
 const chartRef = ref<HTMLDivElement>()
 const chart = shallowRef<echarts.ECharts>()
@@ -29,8 +21,8 @@ async function registerMap() {
 }
 
 function renderChart() {
-  if (!chart.value || props.overviews.length === 0) return
-  const option = getMapOption(props.overviews)
+  if (!chart.value || store.overviews.length === 0) return
+  const option = getMapOption(store.overviews)
   chart.value.setOption(option)
 }
 
@@ -39,13 +31,13 @@ onMounted(async () => {
   if (chartRef.value) {
     chart.value = echarts.init(chartRef.value)
     chart.value.on('click', (params: any) => {
-      if (params.name) emit('province-click', params.name)
+      if (params.name) store.toggleProvince(params.name)
     })
     chart.value.on('mouseover', (params: any) => {
-      if (params.name) emit('province-hover', params.name)
+      if (params.name) store.hoverProvince(params.name)
     })
     chart.value.on('mouseout', () => {
-      emit('province-hover', null)
+      store.hoverProvince(null)
     })
     renderChart()
   }
@@ -61,8 +53,8 @@ function handleResize() {
   chart.value?.resize()
 }
 
-watch(() => props.overviews, renderChart, { deep: true })
-watch(() => props.selectedProvince, (name) => {
+watch(() => store.overviews, renderChart, { deep: true })
+watch(() => store.selectedProvince, (name) => {
   if (!chart.value) return
   chart.value.dispatchAction({
     type: 'mapToggleSelect',
