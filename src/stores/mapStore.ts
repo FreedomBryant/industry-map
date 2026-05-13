@@ -5,6 +5,8 @@ import type { AvailableYear } from '../data'
 import type { ProvinceOverview, ProvinceIndustry, IndustryCategory } from '../types'
 import { INDUSTRIAL_PARKS } from '../data/industrialParks'
 import type { IndustrialPark } from '../data/industrialParks'
+import { TRADE_FLOWS } from '../data/tradeFlows'
+import type { TradeFlow } from '../types'
 
 export interface DashboardSummary {
   totalGDP: number           // 全国 GDP 总量（亿元）
@@ -51,6 +53,9 @@ export const useMapStore = defineStore('map', () => {
 
   /** 是否显示园区/开发区标记 */
   const showParks = ref(false)
+
+  /** 是否显示省份间贸易流向 */
+  const showTradeFlows = ref(false)
 
   /** 当前年份的完整省份数据 */
   const currentYearData = computed<ProvinceIndustry[]>(() => {
@@ -151,6 +156,12 @@ export const useMapStore = defineStore('map', () => {
     }))
   })
 
+  /** 贸易流向数据（根据 toggle 决定是否返回） */
+  const tradeFlowData = computed<TradeFlow[]>(() => {
+    if (!showTradeFlows.value) return []
+    return TRADE_FLOWS
+  })
+
   /** 全国汇总仪表盘数据 */
   const dashboardSummary = computed<DashboardSummary>(() => {
     const ov = overviews.value
@@ -232,6 +243,10 @@ export const useMapStore = defineStore('map', () => {
     showParks.value = !showParks.value
   }
 
+  function toggleTradeFlows() {
+    showTradeFlows.value = !showTradeFlows.value
+  }
+
   function toggleDark() {
     isDark.value = !isDark.value
   }
@@ -276,6 +291,8 @@ export const useMapStore = defineStore('map', () => {
     isDark,
     showDataSource,
     showParks,
+    tradeFlowData,
+    showTradeFlows,
     dashboardSummary,
     parkMarkers,
     drillProvince,
@@ -292,6 +309,7 @@ export const useMapStore = defineStore('map', () => {
     selectIndustry,
     toggleDataSource,
     toggleParks,
+    toggleTradeFlows,
     toggleDark,
     drillToProvince,
     resetDrill,

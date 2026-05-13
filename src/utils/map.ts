@@ -1,5 +1,5 @@
 import * as echarts from 'echarts'
-import type { ProvinceOverview, CityIndustry } from '../types'
+import type { ProvinceOverview, CityIndustry, TradeFlow } from '../types'
 import type { IndustryChain } from '../data/industryChains'
 
 /** 色阶颜色（低→高：从浅黄到深红褐） */
@@ -205,6 +205,8 @@ export function getMapOption(
   enterpriseMarkers?: { name: string; province: string; city?: string }[],
   /** 园区标记：{ name, province, city, type }[]，在地图上显示 pins */
   parkMarkers?: { name: string; province: string; city: string; type: string }[],
+  /** 贸易流向数据：{ source, target, value, category }[]，显示飞线 */
+  tradeFlows?: TradeFlow[],
 ) {
   const maxGdp = Math.max(...overviews.map(o => o.gdp), 100000)
   const minGdp = Math.min(...overviews.map(o => o.gdp), 0)
@@ -281,6 +283,28 @@ export function getMapOption(
     }
   }
 
+  // 贸易流向飞线数据
+  const tradeFlowLinesData: any[] = []
+  if (tradeFlows && tradeFlows.length > 0) {
+    const maxValue = Math.max(...tradeFlows.map(t => t.value))
+    for (const flow of tradeFlows) {
+      const srcCoord = PROVINCE_COORDS[flow.source]
+      const tgtCoord = PROVINCE_COORDS[flow.target]
+      if (!srcCoord || !tgtCoord) continue
+      tradeFlowLinesData.push({
+        coords: [srcCoord, tgtCoord],
+        lineStyle: {
+          opacity: Math.max(0.2, flow.value / maxValue),
+          width: Math.max(1.5, (flow.value / maxValue) * 8),
+        },
+        source: flow.source,
+        target: flow.target,
+        value: flow.value,
+        category: flow.category,
+      })
+    }
+  }
+
   return {
     tooltip: {
       trigger: 'item' as const,
@@ -306,6 +330,13 @@ export function getMapOption(
           return `<b>${data.name}</b><br/>
                   GDP: ${(data.gdp / 10000).toFixed(2)} 万亿元<br/>
                   重点企业: ${data.enterpriseCount} 家`
+        }
+        // 贸易流向飞线
+        if (data.source && data.target) {
+          return `<b style="color:#ff6f00;">🔀 贸易流向</b><br/>
+                  <span>${data.source} → ${data.target}</span><br/>
+                  贸易额: ${(data.value / 10000).toFixed(1)} 万亿元<br/>
+                  品类: ${data.category}`
         }
         // 省份地图
         const overview = overviews.find(o => o.province === data.province)
@@ -457,6 +488,33 @@ export function getMapOption(
           borderColor: '#fff',
           borderWidth: 1.5,
         },
+      }] : []),
+      ...(tradeFlowLinesData.length > 0 ? [{
+        name: '贸易流向',
+        type: 'lines',
+        coordinateSystem: 'geo',
+        zlevel: 4,
+        data: tradeFlowLinesData,
+        lineStyle: {
+          curveness: 0.3,
+          color: '#ff6f00',
+          opacity: 0.6,
+        },
+        effect: {
+          show: true,
+          trailLength: 0.2,
+          period: 4,
+          symbol: 'arrow',
+          symbolSize: [6, 8],
+          color: '#ff8f00',
+        },
+        emphasis: {
+          lineStyle: {
+            opacity: 1,
+            width: 4,
+          },
+        },
+        blendMode: 'source-over',
       }] : []),
     ],
   }

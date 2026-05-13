@@ -41,6 +41,9 @@ function renderChart() {
   // 园区标记数据
   const parkMarks = store.parkMarkers.length > 0 ? store.parkMarkers : undefined
 
+  // 贸易流向数据
+  const tradeFlows = store.tradeFlowData.length > 0 ? store.tradeFlowData : undefined
+
   const option = getMapOption(
     store.overviews,
     store.filteredProvinces,
@@ -51,6 +54,7 @@ function renderChart() {
     drillCities,
     entMarkers,
     parkMarks,
+    tradeFlows,
   )
   chart.value.setOption(option)
 }
@@ -109,6 +113,7 @@ watch(() => store.selectedIndustry, renderChart)
 watch(() => store.drillProvince, renderChart)
 watch(() => store.selectedEnterprise, renderChart)
 watch(() => store.showParks, renderChart)
+watch(() => store.showTradeFlows, renderChart)
 watch(() => store.selectedProvince, (name) => {
   if (!chart.value) return
   chart.value.dispatchAction({

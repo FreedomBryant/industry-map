@@ -14,6 +14,7 @@
         <EnterpriseSearch />
         <IndustryFilter />
         <ParkToggle />
+        <TradeFlowToggle />
         <button class="ds-btn" @click="store.toggleDataSource">📊 数据源</button>
         <button class="theme-btn" @click="store.toggleDark">{{ store.isDark ? '☀️' : '🌙' }}</button>
       </div>
@@ -69,6 +70,7 @@ import ChainPanel from './components/ChainPanel.vue'
 import DataSourcePanel from './components/DataSourcePanel.vue'
 import DashboardPanel from './components/DashboardPanel.vue'
 import ParkToggle from './components/ParkToggle.vue'
+import TradeFlowToggle from './components/TradeFlowToggle.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()

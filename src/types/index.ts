@@ -52,3 +52,11 @@ export interface FilterState {
   year: number
   minGDP: number
 }
+
+/** 省份间贸易流向 */
+export interface TradeFlow {
+  source: string      // 来源省份
+  target: string      // 目标省份
+  value: number       // 贸易额（亿元）
+  category: string    // 主要贸易品类
+}
