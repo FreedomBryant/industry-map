@@ -55,10 +55,6 @@
 
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
-
-watch(() => store.isDark, (val) => {
-  document.documentElement.setAttribute('data-theme', val ? 'dark' : 'light')
-})
 import ChinaMap from './components/ChinaMap.vue'
 import ProvincePanel from './components/ProvincePanel.vue'
 import IndustryFilter from './components/IndustryFilter.vue'
@@ -74,6 +70,10 @@ import TradeFlowToggle from './components/TradeFlowToggle.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()
+
+watch(() => store.isDark, (val) => {
+  document.documentElement.setAttribute('data-theme', val ? 'dark' : 'light')
+})
 
 onMounted(() => {
   store.loadData()
