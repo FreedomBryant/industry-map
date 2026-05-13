@@ -11,6 +11,10 @@ export const useMapStore = defineStore('map', () => {
   const selectedCategory = ref<IndustryCategory | null>(null)
   /** 待对比省份列表（最多 4 个） */
   const compareProvinces = ref<string[]>([])
+  /** 搜索框查询文本 */
+  const searchQuery = ref('')
+  /** 搜索高亮的省份名 */
+  const searchHighlight = ref<string | null>(null)
 
   // === Getters ===
   const selectedProvinceData = computed<ProvinceIndustry | null>(() => {
@@ -33,9 +37,19 @@ export const useMapStore = defineStore('map', () => {
       .filter((p): p is ProvinceIndustry => p !== undefined)
   })
 
+  /** 所有省份概览数据（供搜索用） */
+  const searchResults = computed<ProvinceOverview[]>(() => {
+    if (!searchQuery.value.trim()) return []
+    const q = searchQuery.value.trim()
+    return overviews.value.filter(
+      o => o.province.includes(q) || o.mainIndustry.includes(q)
+    )
+  })
+
   // === Actions ===
   function selectProvince(name: string | null) {
     selectedProvince.value = name
+    if (name === null) searchHighlight.value = null
   }
 
   function toggleProvince(name: string) {
@@ -73,6 +87,12 @@ export const useMapStore = defineStore('map', () => {
     overviews.value = getProvinceOverviews()
   }
 
+  function searchProvince(name: string) {
+    searchQuery.value = ''
+    searchHighlight.value = name
+    selectedProvince.value = name
+  }
+
   return {
     overviews,
     selectedProvince,
@@ -82,6 +102,9 @@ export const useMapStore = defineStore('map', () => {
     filteredProvinces,
     compareProvinces,
     compareProvinceData,
+    searchQuery,
+    searchResults,
+    searchHighlight,
     selectProvince,
     toggleProvince,
     hoverProvince,
@@ -90,5 +113,6 @@ export const useMapStore = defineStore('map', () => {
     removeCompareProvince,
     clearCompare,
     loadData,
+    searchProvince,
   }
 })

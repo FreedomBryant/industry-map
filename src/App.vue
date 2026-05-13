@@ -6,6 +6,7 @@
         <h1>🗺️ 中国产业地图</h1>
         <span class="subtitle">China Industry Map</span>
       </div>
+      <SearchBox />
       <IndustryFilter />
     </header>
 
@@ -40,6 +41,7 @@ import ChinaMap from './components/ChinaMap.vue'
 import ProvincePanel from './components/ProvincePanel.vue'
 import IndustryFilter from './components/IndustryFilter.vue'
 import ComparePanel from './components/ComparePanel.vue'
+import SearchBox from './components/SearchBox.vue'
 import { useMapStore } from './stores/mapStore'
 
 const store = useMapStore()
