@@ -59,10 +59,12 @@ export const useMapStore = defineStore('map', () => {
 
   /** 当前年份的完整省份数据 */
   const currentYearData = computed<ProvinceIndustry[]>(() => {
-    return getProvinceByName(provinceData[0]?.province ?? '', selectedYear.value)
-      ? provinceData.map(p => getProvinceByName(p.province, selectedYear.value) ?? p)
-      : provinceData
-  })
+   /** 当前年份的完整省份数据 */
+     // 检查是否有选中年份
+     if (!selectedYear.value) return provinceData
+     // 用选中年份过滤数据，保留原数据结构
+     return provinceData.map(p => getProvinceByName(p.province, selectedYear.value) ?? p)
+   })
 
   // === Getters ===
   const selectedProvinceData = computed<ProvinceIndustry | null>(() => {
@@ -70,13 +72,16 @@ export const useMapStore = defineStore('map', () => {
     return getProvinceByName(selectedProvince.value, selectedYear.value) ?? null
   })
 
-  /** 匹配当前筛选产业的省份简称列表 */
-  const filteredProvinces = computed<string[]>(() => {
-    if (!selectedCategory.value) return []
-    return provinceData
-      .filter(p => p.industries.some(i => i.category === selectedCategory.value))
-      .map(p => p.province)
-  })
+   /** 匹配当前筛选产业的省份简称列表 */
+   const filteredProvinces = computed<string[]>(() => {
+     if (!selectedCategory.value) {
+       return []
+     }
+     const result = provinceData
+       .filter(p => p.industries.some(i => i.category === selectedCategory.value))
+       .map(p => p.province)
+     return result
+   })
 
   /** 待对比省份的完整数据 */
   const compareProvinceData = computed<ProvinceIndustry[]>(() => {

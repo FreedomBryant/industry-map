@@ -27,7 +27,7 @@ async function registerMap() {
 }
 
 function renderChart() {
-  if (!chart.value || store.overviews.length === 0) return
+   if (!chart.value || store.overviews.length === 0) return
   const chain = store.selectedIndustry ? getChainById(store.selectedIndustry) : undefined
 
   // 下钻模式：获取该省份的城市数据
@@ -61,41 +61,41 @@ function renderChart() {
   chart.value.setOption(option)
 }
 
-onMounted(async () => {
-  await registerMap()
-  if (chartRef.value) {
-    chart.value = echarts.init(chartRef.value)
-    chart.value.on('click', (params: any) => {
-      if (!params.name) {
-        // 点击空白区域
-        if (store.drillProvince) store.resetDrill()
-        return
-      }
-      // 城市散点点击 → 选中对应省份
-      if (params.seriesName === '城市') {
-        store.selectProvince(store.drillProvince)
-        return
-      }
-      // 省份地图点击
-      if (store.drillProvince) {
-        // 已下钻状态：再次点击省份复位
-        store.resetDrill()
-      } else {
-        // 未下钻：进入该省份下钻
-        store.drillToProvince(params.name)
-      }
-      store.toggleProvince(params.name)
-    })
-    chart.value.on('mouseover', (params: any) => {
-      if (params.name) store.hoverProvince(params.name)
-    })
-    chart.value.on('mouseout', () => {
-      store.hoverProvince(null)
-    })
-    renderChart()
-  }
-  window.addEventListener('resize', handleResize)
-})
+   onMounted(async () => {
+    await registerMap()
+    if (chartRef.value) {
+      chart.value = echarts.init(chartRef.value)
+      chart.value.on('click', (params: any) => {
+        if (!params.name) {
+          // 点击空白区域
+          if (store.drillProvince) store.resetDrill()
+          return
+        }
+        // 城市散点点击 → 选中对应省份
+        if (params.seriesName === '城市') {
+          store.selectProvince(store.drillProvince)
+          return
+        }
+        // 省份地图点击
+        if (store.drillProvince) {
+          // 已下钻状态：再次点击省份复位
+          store.resetDrill()
+        } else {
+          // 未下钻：进入该省份下钻
+          store.drillToProvince(params.name)
+        }
+        store.toggleProvince(params.name)
+      })
+      chart.value.on('mouseover', (params: any) => {
+        if (params.name) store.hoverProvince(params.name)
+      })
+      chart.value.on('mouseout', () => {
+        store.hoverProvince(null)
+      })
+      renderChart()
+    }
+    window.addEventListener('resize', handleResize)
+  })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)

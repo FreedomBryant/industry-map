@@ -383,10 +383,17 @@ export function getMapOption(
           itemStyle: { areaColor: '#ffd54f' },
         },
         data: overviews.map(o => {
-          const matched = !isFiltering || filteredProvinces.includes(o.province)
+          const matched = !isFiltering || filteredProvinces!.includes(o.province)
           const isCompared = isComparing && compareProvinces.includes(o.province)
           const isHighlighted = isHighlighting && o.province === highlightProvince
-          let itemStyle: any = matched ? undefined : { areaColor: '#e0e0e0' }
+
+          // 筛选模式下：匹配省份用正常颜色，不匹配用浅灰
+          let areaColor: string | undefined
+          if (isFiltering && !matched) {
+            areaColor = '#f0f0f0'
+          }
+
+          let itemStyle: any = areaColor ? { areaColor } : undefined
           if (isCompared) {
             itemStyle = {
               ...(itemStyle || {}),
@@ -407,7 +414,8 @@ export function getMapOption(
           }
           return {
             name: SHORT_TO_FULL[o.province] || o.province,
-            value: o.gdp,
+            // 筛选时，不匹配省份设 value 为极低值，让 visualMap 落到最低色
+            value: isFiltering && !matched ? -100000 : o.gdp,
             province: o.province,
             fullName: o.province,
             mainIndustry: o.mainIndustry,

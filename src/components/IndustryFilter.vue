@@ -3,14 +3,14 @@
     <span
       class="filter-chip"
       :class="{ active: !store.selectedCategory }"
-      @click="store.setCategory(null)"
+      @click="() => store.setCategory(null)"
     >全部</span>
     <span
       v-for="cat in categories"
       :key="cat"
       class="filter-chip"
       :class="{ active: store.selectedCategory === cat }"
-      @click="store.setCategory(cat)"
+      @click="() => store.setCategory(cat)"
     >{{ cat }}</span>
   </div>
 </template>

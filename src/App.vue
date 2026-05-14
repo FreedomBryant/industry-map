@@ -25,6 +25,11 @@
     <div class="app-body">
       <!-- 左侧地图区 -->
       <div class="map-area">
+        <div v-if="store.selectedCategory" class="filter-banner">
+          🔍 当前筛选：<strong>{{ store.selectedCategory }}</strong>
+          <span class="filter-count">（{{ store.filteredProvinces.length }} 个省份/地区匹配）</span>
+          <button class="filter-clear" @click="store.setCategory(null)">✕ 清除</button>
+        </div>
         <ChinaMap />
       </div>
 
@@ -210,6 +215,46 @@ onMounted(() => {
 .theme-btn:hover {
   background: var(--bg-hover);
   border-color: var(--border-dark);
+}
+
+.filter-banner {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--green-light);
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--text-color);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.filter-count {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.filter-clear {
+  margin-left: 4px;
+  padding: 2px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+.filter-clear:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #dc2626;
 }
 </style>
 
